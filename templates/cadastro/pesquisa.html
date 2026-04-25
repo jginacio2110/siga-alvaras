@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Pesquisar Alvarás</title>
+<style>
+body{
+font-family:Arial;
+background:#f1f1f1;
+padding:40px;
+}
+.box{
+background:white;
+padding:30px;
+border-radius:10px;
+max-width:900px;
+margin:auto;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+button{
+margin-top:15px;
+padding:12px;
+width:100%;
+background:#0d1b2a;
+color:white;
+border:none;
+border-radius:5px;
+}
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+th,td{
+padding:10px;
+border:1px solid #ccc;
+text-align:left;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Pesquisar Alvarás</h2>
+
+<form method="get">
+<input type="text" name="q" placeholder="Digite Nome, CNPJ ou Número">
+<button type="submit">Pesquisar</button>
+</form>
+
+<table>
+<tr>
+<th>Número</th>
+<th>Nome</th>
+<th>CNPJ</th>
+<th>Situação</th>
+</tr>
+
+{% for item in dados %}
+<tr>
+<td>{{ item.numero }}</td>
+<td>{{ item.nome }}</td>
+<td>{{ item.cnpj }}</td>
+<td>{{ item.situacao }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+</html>
