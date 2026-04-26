@@ -2,78 +2,119 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Pesquisar Alvarás</title>
+<title>Pesquisar - GSVG</title>
 <style>
-body{
-font-family:Arial;
-background:#f1f1f1;
-padding:40px;
-}
-.box{
-background:white;
-padding:30px;
-border-radius:10px;
-max-width:900px;
-margin:auto;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-input{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:1px solid #ccc;
-border-radius:5px;
-}
-button{
-margin-top:15px;
-padding:12px;
-width:100%;
-background:#0d1b2a;
-color:white;
-border:none;
-border-radius:5px;
-}
-table{
-width:100%;
-margin-top:20px;
-border-collapse:collapse;
-}
-th,td{
-padding:10px;
-border:1px solid #ccc;
-text-align:left;
-}
+body{font-family:Arial;background:#f1f1f1;padding:40px}
+.box{background:white;padding:30px;border-radius:10px;max-width:1000px;margin:20px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+input,button{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
+button{background:#0d1b2a;color:white;border:none}
+table{width:100%;margin-top:20px;border-collapse:collapse}
+th,td{padding:10px;border:1px solid #ccc;text-align:left}
+h2{margin-top:0}
+a{color:#0d1b2a;font-weight:bold}
 </style>
 </head>
 <body>
 
 <div class="box">
-<h2>Pesquisar Alvarás</h2>
+<h2>Pesquisar Empresa</h2>
 
 <form method="get">
-<input type="text" name="q" placeholder="Digite Nome, CNPJ ou Número">
-<button type="submit">Pesquisar</button>
+<input list="lista_empresas" name="empresa" value="{{ busca_empresa }}" placeholder="Digite nome ou CNPJ da empresa">
+<datalist id="lista_empresas">
+{% for empresa in empresas %}
+<option value="{{ empresa.nome }}"></option>
+{% endfor %}
+</datalist>
+
+<button type="submit">Pesquisar Empresa</button>
 </form>
 
 <table>
 <tr>
-<th>Número</th>
-<th>Nome</th>
 <th>CNPJ</th>
+<th>Nome</th>
+<th>Endereço</th>
 <th>Situação</th>
+<th>Ações</th>
 </tr>
 
-{% for item in dados %}
+{% for empresa in resultado_empresas %}
 <tr>
-<td>{{ item.numero }}</td>
-<td>{{ item.nome }}</td>
-<td>{{ item.cnpj }}</td>
-<td>{{ item.situacao }}</td>
+<td>{{ empresa.cnpj }}</td>
+<td>{{ empresa.nome }}</td>
+<td>{{ empresa.endereco }}</td>
+<td>{{ empresa.situacao }}</td>
+<td>
+{% if request.user.is_superuser %}
+    <a href="/editar-empresa/{{ empresa.id }}">Editar</a> |
+    <a href="/excluir-empresa/{{ empresa.id }}">Excluir</a>
+{% else %}
+    {% for p in request.user.permissaousuario_set.all %}
+        {% if p.liberado and p.pagina.rota == 'editar' %}
+            <a href="/editar-empresa/{{ empresa.id }}">Editar</a>
+        {% endif %}
+        {% if p.liberado and p.pagina.rota == 'excluir' %}
+            <a href="/excluir-empresa/{{ empresa.id }}">Excluir</a>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="5">Nenhuma empresa encontrada.</td>
 </tr>
 {% endfor %}
-
 </table>
+</div>
 
+
+<div class="box">
+<h2>Pesquisar Segurança</h2>
+
+<form method="get">
+<input type="text" name="cpf" value="{{ busca_cpf }}" placeholder="Digite o CPF do segurança">
+<button type="submit">Pesquisar Segurança</button>
+</form>
+
+<table>
+<tr>
+<th>CPF</th>
+<th>Nome</th>
+<th>Empresa</th>
+<th>Situação</th>
+<th>Ações</th>
+</tr>
+
+{% for s in resultado_segurancas %}
+<tr>
+<td>{{ s.cpf }}</td>
+<td>{{ s.nome_completo }}</td>
+<td>{{ s.empresa.nome }}</td>
+<td>{{ s.situacao }}</td>
+<td>
+{% if request.user.is_superuser %}
+    <a href="/editar-seguranca/{{ s.id }}">Editar</a> |
+    <a href="/excluir-seguranca/{{ s.id }}">Excluir</a>
+{% else %}
+    {% for p in request.user.permissaousuario_set.all %}
+        {% if p.liberado and p.pagina.rota == 'editar' %}
+            <a href="/editar-seguranca/{{ s.id }}">Editar</a>
+        {% endif %}
+        {% if p.liberado and p.pagina.rota == 'excluir' %}
+            <a href="/excluir-seguranca/{{ s.id }}">Excluir</a>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="5">Nenhum segurança encontrado.</td>
+</tr>
+{% endfor %}
+</table>
 </div>
 
 </body>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Usuários - GSVG</title>
+<style>
+body{font-family:Arial;background:#f1f1f1;padding:40px}
+.box{background:white;padding:30px;border-radius:10px;max-width:1000px;margin:20px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+input,button{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
+button{background:#0d1b2a;color:white;border:none}
+table{width:100%;margin-top:20px;border-collapse:collapse}
+th,td{padding:10px;border:1px solid #ccc;text-align:left}
+a{color:#0d1b2a;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Criar Usuário</h2>
+
+<form method="post">
+{% csrf_token %}
+<input type="text" name="username" placeholder="Usuário" required>
+<input type="email" name="email" placeholder="E-mail">
+<input type="password" name="senha" placeholder="Senha inicial" required>
+<button type="submit">Criar Usuário</button>
+</form>
+</div>
+
+<div class="box">
+<h2>Usuários cadastrados</h2>
+
+<table>
+<tr>
+<th>Usuário</th>
+<th>E-mail</th>
+<th>Ativo</th>
+<th>Superuser</th>
+<th>Permissões</th>
+<th>Nível</th>
+</tr>
+
+{% for u in usuarios %}
+<tr>
+<td>{{ u.username }}</td>
+<td>{{ u.email }}</td>
+<td>{{ u.is_active }}</td>
+<td>{{ u.is_superuser }}</td>
+
+<td>
+<a href="/permissoes/?usuario={{ u.id }}">Configurar</a>
+</td>
+
+<td>
+<a href="/aplicar-nivel/{{ u.id }}/admin/">Admin</a> |
+<a href="/aplicar-nivel/{{ u.id }}/operador/">Operador</a> |
+<a href="/aplicar-nivel/{{ u.id }}/consulta/">Consulta</a>
+</td>
+
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</body>
+</html>

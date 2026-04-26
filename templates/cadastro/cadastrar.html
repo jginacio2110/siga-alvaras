@@ -2,64 +2,82 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Cadastrar Alvará</title>
+<title>Cadastrar - GSVG</title>
 <style>
-body{
-font-family:Arial;
-background:#f1f1f1;
-padding:40px;
-}
-.box{
-background:white;
-padding:30px;
-border-radius:10px;
-max-width:700px;
-margin:auto;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-input, select{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:1px solid #ccc;
-border-radius:5px;
-}
-button{
-margin-top:15px;
-padding:12px;
-width:100%;
-background:#0d1b2a;
-color:white;
-border:none;
-border-radius:5px;
-}
+body{font-family:Arial;background:#f1f1f1;padding:40px}
+.box{background:white;padding:30px;border-radius:10px;max-width:750px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
+button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px}
 </style>
+
+<script>
+function trocarTipo(){
+    let tipo = document.getElementById("tipo").value;
+    document.getElementById("form_empresa").style.display = tipo === "empresa" ? "block" : "none";
+    document.getElementById("form_seguranca").style.display = tipo === "seguranca" ? "block" : "none";
+}
+
+// CPF: 000.000.000-00
+function mascaraCPF(campo){
+    let v = campo.value.replace(/\D/g,'');
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+    campo.value = v;
+}
+
+// CNPJ: 00.000.000/0000-00
+function mascaraCNPJ(campo){
+    let v = campo.value.replace(/\D/g,'');
+    v = v.replace(/^(\d{2})(\d)/,'$1.$2');
+    v = v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+    v = v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+    v = v.replace(/(\d{4})(\d)/,'$1-$2');
+    campo.value = v;
+}
+</script>
 </head>
 <body>
 
 <div class="box">
-<h2>Cadastrar Alvará</h2>
+<h2>Cadastrar</h2>
 
-<form method="post">
-{% csrf_token %}
-
-<input type="text" name="numero" placeholder="Número do Alvará">
-<input type="text" name="nome" placeholder="Nome Empresa">
-<input type="text" name="cnpj" placeholder="CNPJ">
-<input type="text" name="endereco" placeholder="Endereço">
-<input type="text" name="responsavel" placeholder="Responsável">
-<input type="date" name="emissao">
-<input type="date" name="validade">
-
-<select name="situacao">
-<option>Ativo</option>
-<option>Vencido</option>
-<option>Suspenso</option>
+<select id="tipo" onchange="trocarTipo()">
+    <option value="empresa">Empresa</option>
+    <option value="seguranca">Segurança</option>
 </select>
 
-<button type="submit">Salvar</button>
+<!-- EMPRESA -->
+<form id="form_empresa" method="post">
+{% csrf_token %}
+<input type="hidden" name="tipo" value="empresa">
 
+<input type="text" name="cnpj" maxlength="18" placeholder="CNPJ da Empresa" oninput="mascaraCNPJ(this)" required>
+<input type="text" name="nome" placeholder="Nome da Empresa" required>
+<input type="text" name="endereco" placeholder="Endereço" required>
+
+<button type="submit">Salvar Empresa</button>
 </form>
+
+<!-- SEGURANÇA -->
+<form id="form_seguranca" method="post" style="display:none;">
+{% csrf_token %}
+<input type="hidden" name="tipo" value="seguranca">
+
+<input type="text" name="cpf" maxlength="14" placeholder="CPF do Segurança" oninput="mascaraCPF(this)" required>
+<input type="text" name="nome_completo" placeholder="Nome Completo" required>
+
+<input list="lista_empresas" name="empresa_busca" placeholder="Digite nome ou CNPJ da empresa" required>
+
+<datalist id="lista_empresas">
+    {% for empresa in empresas %}
+        <option value="{{ empresa.nome }} - {{ empresa.cnpj }}"></option>
+    {% endfor %}
+</datalist>
+
+<button type="submit">Salvar Segurança</button>
+</form>
+
 </div>
 
 </body>

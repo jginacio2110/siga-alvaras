@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Confirmar Exclusão - GSVG</title>
+<style>
+body{font-family:Arial;background:#f1f1f1;display:flex;justify-content:center;align-items:center;height:100vh}
+.box{background:white;padding:40px;border-radius:10px;text-align:center;max-width:500px}
+button{padding:12px 20px;background:#8b0000;color:white;border:none;border-radius:5px}
+a{display:block;margin-top:20px;color:#0d1b2a}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>Confirmar exclusão</h2>
+<p>Deseja excluir {{ tipo }}: <strong>{{ nome }}</strong>?</p>
+
+<form method="post">
+{% csrf_token %}
+<button type="submit">Sim, excluir</button>
+</form>
+
+<a href="/pesquisar">Cancelar</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Permissões - GSVG</title>
+<style>
+body{font-family:Arial;background:#f1f1f1;padding:40px}
+.box{background:white;padding:30px;border-radius:10px;max-width:800px;margin:auto}
+label{display:block;margin:12px 0}
+select,button{width:100%;padding:12px;margin-top:10px}
+button{background:#0d1b2a;color:white;border:none;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>Permissões de Usuário</h2>
+
+<form method="get">
+<select name="usuario" onchange="this.form.submit()">
+<option value="">Selecione um usuário</option>
+{% for u in usuarios %}
+<option value="{{ u.id }}" {% if usuario_selecionado and usuario_selecionado.id == u.id %}selected{% endif %}>
+{{ u.username }}
+</option>
+{% endfor %}
+</select>
+</form>
+
+{% if usuario_selecionado %}
+<form method="post">
+{% csrf_token %}
+<input type="hidden" name="usuario_id" value="{{ usuario_selecionado.id }}">
+
+<h3>Permissões para: {{ usuario_selecionado.username }}</h3>
+
+{% for pagina in paginas %}
+<label>
+<input type="checkbox" name="paginas" value="{{ pagina.id }}"
+{% if pagina.id in permissoes_marcadas %}checked{% endif %}>
+{{ pagina.nome }}
+</label>
+{% endfor %}
+
+<button type="submit">Salvar Permissões</button>
+</form>
+{% endif %}
+
+</div>
+</body>
+</html>
