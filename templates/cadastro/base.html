@@ -130,7 +130,8 @@ body {
     color: #222;
 }
 
-.menu-item:hover .submenu {
+/* SUBMENU ABERTO POR CLIQUE */
+.menu-item.ativo .submenu {
     display: block;
 }
 
@@ -222,20 +223,67 @@ body {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const btn = document.querySelector('.usuario-btn');
-    const dropdown = document.querySelector('.dropdown');
 
-    btn.onclick = function(e) {
-        e.stopPropagation();
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    };
+    const usuarioBtn = document.querySelector('.usuario-btn');
+    const usuarioDropdown = document.querySelector('.dropdown');
+    const menuItems = document.querySelectorAll('.menu-item');
 
-    dropdown.onclick = function(e) {
-        e.stopPropagation();
-    };
+    function fecharSubmenus() {
+        menuItems.forEach(function(item) {
+            item.classList.remove('ativo');
+        });
+    }
+
+    function fecharUsuario() {
+        if (usuarioDropdown) {
+            usuarioDropdown.style.display = 'none';
+        }
+    }
+
+    menuItems.forEach(function(item) {
+        const link = item.querySelector('a');
+
+        link.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const estavaAberto = item.classList.contains('ativo');
+
+            fecharSubmenus();
+            fecharUsuario();
+
+            if (!estavaAberto) {
+                item.classList.add('ativo');
+            }
+        };
+
+        const submenu = item.querySelector('.submenu');
+
+        if (submenu) {
+            submenu.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
+    });
+
+    if (usuarioBtn && usuarioDropdown) {
+        usuarioBtn.onclick = function(e) {
+            e.stopPropagation();
+
+            fecharSubmenus();
+
+            usuarioDropdown.style.display =
+                usuarioDropdown.style.display === 'block' ? 'none' : 'block';
+        };
+
+        usuarioDropdown.onclick = function(e) {
+            e.stopPropagation();
+        };
+    }
 
     document.addEventListener('click', function() {
-        dropdown.style.display = 'none';
+        fecharSubmenus();
+        fecharUsuario();
     });
 });
 </script>

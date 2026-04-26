@@ -1,62 +1,202 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>GSVG</title>
+<title>Login - GSVG</title>
+
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#0d1b2a;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: url("{% static 'img/fundo-login.jpg' %}") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.box{
-background:white;
-padding:40px;
-border-radius:10px;
-width:350px;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
+
+.login-box {
+    width: 360px;
+    background: rgba(255,255,255,0.82);
+    border-radius: 12px;
+    padding: 25px 22px 35px;
+    box-sizing: border-box;
+    border-top: 4px solid #f4c21b;
+    box-shadow: 0 4px 18px rgba(0,0,0,.25);
 }
-h2{
-text-align:center;
-color:#0d1b2a;
+
+.logo-area {
+    text-align: center;
+    margin-bottom: 25px;
 }
-input{
-width:100%;
-padding:12px;
-margin:8px 0;
-border:1px solid #ccc;
-border-radius:5px;
+
+.logo-area img {
+    width: 85px;
+    vertical-align: middle;
 }
-button{
-width:100%;
-padding:12px;
-background:#1b263b;
-color:white;
-border:none;
-border-radius:5px;
-cursor:pointer;
+
+.logo-area span {
+    font-size: 36px;
+    font-weight: bold;
+    color: #0d1b2a;
+    vertical-align: middle;
+    margin-left: 10px;
 }
-button:hover{
-background:#415a77;
+
+.logo-area small {
+    font-weight: normal;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    color: #555;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.input-box {
+    display: flex;
+    border: 1px solid #5da2ff;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #eaf2ff;
+}
+
+.input-box input {
+    flex: 1;
+    border: none;
+    padding: 12px;
+    font-size: 15px;
+    background: #eaf2ff;
+    outline: none;
+}
+
+.input-icon {
+    width: 38px;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+}
+
+.checkbox-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 22px;
+    color: #555;
+    font-weight: bold;
+}
+
+.checkbox-area input {
+    width: 22px;
+    height: 22px;
+}
+
+.btn-login {
+    width: 100%;
+    border: none;
+    background: #f4c21b;
+    color: #000;
+    padding: 13px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-login:hover {
+    background: #d9aa0f;
+}
+
+.links {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.links a {
+    display: block;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 18px 0;
+}
+
+.esqueci {
+    color: #007bff;
+}
+
+.registrar {
+    color: #0aa12a;
+}
+
+.erro {
+    background: #ffd6d6;
+    color: #8b0000;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
 }
 </style>
 </head>
+
 <body>
-<div class="box">
-<h2>GSVG</h2>
-{% if erro %}
-<p style="color:red; text-align:center;">{{ erro }}</p>
-{% endif %}
-<form method="post">
-{% csrf_token %}
-<input type="text" name="username" placeholder="Usuário">
-<input type="password" name="password" placeholder="Senha">
-<button type="submit">Entrar</button>
-</form>
+
+<div class="login-box">
+
+    <div class="logo-area">
+        <img src="{% static 'img/logo.png' %}" alt="Logo">
+        <span>BM <small>SSO</small></span>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="erro">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Id Funcional</label>
+            <div class="input-box">
+                <input type="text" name="username" placeholder="Id Funcional" required>
+                <div class="input-icon">👤</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Senha</label>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Senha" required>
+                <div class="input-icon">🔒</div>
+            </div>
+        </div>
+
+        <label class="checkbox-area">
+            <input type="checkbox" name="lembrar">
+            Lembrar-me
+        </label>
+
+        <button type="submit" class="btn-login">
+            Entrar ➜
+        </button>
+    </form>
+
+    <div class="links">
+        <a href="/alterar-senha/" class="esqueci">Esqueci minha senha</a>
+        <a href="/registrar/" class="registrar">Registrar um novo usuário</a>
+    </div>
+
 </div>
+
 </body>
 </html>
