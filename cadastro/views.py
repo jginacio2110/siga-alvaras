@@ -504,3 +504,10 @@ def alternar_usuario(request, id):
     )
 
     return redirect('/usuarios/')
+
+def alterar_senha(request):
+    return render(request, 'cadastro/alterar_senha.html')
+
+
+def registrar(request):
+    return render(request, 'cadastro/registrar.html')
