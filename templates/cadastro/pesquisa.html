@@ -1,26 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Pesquisar - GSVG</title>
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
 <style>
-body{font-family:Arial;background:#f1f1f1;padding:40px}
+.pagina{background:#f1f1f1;padding:40px}
 .box{background:white;padding:30px;border-radius:10px;max-width:1000px;margin:20px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
 input,button{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
-button{background:#0d1b2a;color:white;border:none}
+button{background:#0d1b2a;color:white;border:none;cursor:pointer}
 table{width:100%;margin-top:20px;border-collapse:collapse}
 th,td{padding:10px;border:1px solid #ccc;text-align:left}
 h2{margin-top:0}
-a{color:#0d1b2a;font-weight:bold}
+a{color:#0d1b2a;font-weight:bold;text-decoration:none}
 </style>
-</head>
-<body>
+
+<div class="pagina">
 
 <div class="box">
 <h2>Pesquisar Empresa</h2>
 
 <form method="get">
 <input list="lista_empresas" name="empresa" value="{{ busca_empresa }}" placeholder="Digite nome ou CNPJ da empresa">
+
 <datalist id="lista_empresas">
 {% for empresa in empresas %}
 <option value="{{ empresa.nome }}"></option>
@@ -47,15 +46,15 @@ a{color:#0d1b2a;font-weight:bold}
 <td>{{ empresa.situacao }}</td>
 <td>
 {% if request.user.is_superuser %}
-    <a href="/editar-empresa/{{ empresa.id }}">Editar</a> |
-    <a href="/excluir-empresa/{{ empresa.id }}">Excluir</a>
+    <a href="/editar-empresa/{{ empresa.id }}/">Editar</a> |
+    <a href="/excluir-empresa/{{ empresa.id }}/">Excluir</a>
 {% else %}
     {% for p in request.user.permissaousuario_set.all %}
         {% if p.liberado and p.pagina.rota == 'editar' %}
-            <a href="/editar-empresa/{{ empresa.id }}">Editar</a>
+            <a href="/editar-empresa/{{ empresa.id }}/">Editar</a>
         {% endif %}
         {% if p.liberado and p.pagina.rota == 'excluir' %}
-            <a href="/excluir-empresa/{{ empresa.id }}">Excluir</a>
+            <a href="/excluir-empresa/{{ empresa.id }}/">Excluir</a>
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -68,7 +67,6 @@ a{color:#0d1b2a;font-weight:bold}
 {% endfor %}
 </table>
 </div>
-
 
 <div class="box">
 <h2>Pesquisar Segurança</h2>
@@ -95,15 +93,15 @@ a{color:#0d1b2a;font-weight:bold}
 <td>{{ s.situacao }}</td>
 <td>
 {% if request.user.is_superuser %}
-    <a href="/editar-seguranca/{{ s.id }}">Editar</a> |
-    <a href="/excluir-seguranca/{{ s.id }}">Excluir</a>
+    <a href="/editar-seguranca/{{ s.id }}/">Editar</a> |
+    <a href="/excluir-seguranca/{{ s.id }}/">Excluir</a>
 {% else %}
     {% for p in request.user.permissaousuario_set.all %}
         {% if p.liberado and p.pagina.rota == 'editar' %}
-            <a href="/editar-seguranca/{{ s.id }}">Editar</a>
+            <a href="/editar-seguranca/{{ s.id }}/">Editar</a>
         {% endif %}
         {% if p.liberado and p.pagina.rota == 'excluir' %}
-            <a href="/excluir-seguranca/{{ s.id }}">Excluir</a>
+            <a href="/excluir-seguranca/{{ s.id }}/">Excluir</a>
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -117,5 +115,6 @@ a{color:#0d1b2a;font-weight:bold}
 </table>
 </div>
 
-</body>
-</html>
+</div>
+
+{% endblock %}

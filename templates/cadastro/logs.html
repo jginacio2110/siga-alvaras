@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Logs - GSVG</title>
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
 <style>
-body{font-family:Arial;background:#f1f1f1;padding:40px}
+.pagina{background:#f1f1f1;padding:40px}
 .box{background:white;padding:30px;border-radius:10px;max-width:1200px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
 input,select,button{padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
 button{background:#0d1b2a;color:white;border:none;cursor:pointer}
@@ -12,12 +10,12 @@ table{width:100%;border-collapse:collapse;margin-top:20px}
 th,td{padding:10px;border:1px solid #ccc;text-align:left}
 .filtros{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
 .acoes{margin-top:10px}
-a{color:#0d1b2a;font-weight:bold}
+a{color:#0d1b2a;font-weight:bold;margin-right:15px}
 </style>
-</head>
-<body>
 
+<div class="pagina">
 <div class="box">
+
 <h2>Logs do Sistema</h2>
 
 <form method="get">
@@ -39,7 +37,7 @@ a{color:#0d1b2a;font-weight:bold}
 
 <div class="acoes">
 <button type="submit">Filtrar</button>
-<a href="/logs">Limpar filtros</a>
+<a href="/logs/">Limpar filtros</a>
 <a href="/exportar-logs/">Exportar CSV</a>
 </div>
 </form>
@@ -67,6 +65,6 @@ a{color:#0d1b2a;font-weight:bold}
 </table>
 
 </div>
+</div>
 
-</body>
-</html>
+{% endblock %}

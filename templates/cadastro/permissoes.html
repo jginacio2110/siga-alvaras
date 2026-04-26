@@ -1,18 +1,17 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Permissões - GSVG</title>
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
 <style>
-body{font-family:Arial;background:#f1f1f1;padding:40px}
-.box{background:white;padding:30px;border-radius:10px;max-width:800px;margin:auto}
+.pagina{background:#f1f1f1;padding:40px}
+.box{background:white;padding:30px;border-radius:10px;max-width:800px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
 label{display:block;margin:12px 0}
-select,button{width:100%;padding:12px;margin-top:10px}
-button{background:#0d1b2a;color:white;border:none;border-radius:5px}
+select,button{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
+button{background:#0d1b2a;color:white;border:none;cursor:pointer}
 </style>
-</head>
-<body>
+
+<div class="pagina">
 <div class="box">
+
 <h2>Permissões de Usuário</h2>
 
 <form method="get">
@@ -46,5 +45,6 @@ button{background:#0d1b2a;color:white;border:none;border-radius:5px}
 {% endif %}
 
 </div>
-</body>
-</html>
+</div>
+
+{% endblock %}

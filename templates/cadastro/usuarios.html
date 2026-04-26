@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Usuários - GSVG</title>
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
 <style>
-body{font-family:Arial;background:#f1f1f1;padding:40px}
+.pagina{background:#f1f1f1;padding:40px}
 .box{background:white;padding:30px;border-radius:10px;max-width:1000px;margin:20px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
 input,button{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
-button{background:#0d1b2a;color:white;border:none}
+button{background:#0d1b2a;color:white;border:none;cursor:pointer}
 table{width:100%;margin-top:20px;border-collapse:collapse}
 th,td{padding:10px;border:1px solid #ccc;text-align:left}
-a{color:#0d1b2a;font-weight:bold}
+a{color:#0d1b2a;font-weight:bold;text-decoration:none}
 .erro{color:#8b0000;background:#ffecec;padding:10px;border-radius:5px;margin-bottom:10px}
 </style>
-</head>
-<body>
+
+<div class="pagina">
 
 <div class="box">
 <h2>Criar Usuário</h2>
@@ -54,6 +52,7 @@ a{color:#0d1b2a;font-weight:bold}
 <tr>
 <td>{{ u.username }}</td>
 <td>{{ u.email }}</td>
+
 <td>
 {% if u.is_active %}
     ✔ Ativo
@@ -83,9 +82,9 @@ a{color:#0d1b2a;font-weight:bold}
 <td>
 {% if u.id != request.user.id %}
     {% if u.is_active %}
-        <a href="/alternar-usuario/{{ u.id }}">Desativar</a>
+        <a href="/alternar-usuario/{{ u.id }}/">Desativar</a>
     {% else %}
-        <a href="/alternar-usuario/{{ u.id }}">Ativar</a>
+        <a href="/alternar-usuario/{{ u.id }}/">Ativar</a>
     {% endif %}
 {% else %}
     -
@@ -96,5 +95,6 @@ a{color:#0d1b2a;font-weight:bold}
 </table>
 </div>
 
-</body>
-</html>
+</div>
+
+{% endblock %}

@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Cadastrar - GSVG</title>
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
 <style>
-body{font-family:Arial;background:#f1f1f1;padding:40px}
-.box{background:white;padding:30px;border-radius:10px;max-width:750px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+body{font-family:Arial;background:#f1f1f1}
+.box{background:white;padding:30px;border-radius:10px;max-width:750px;margin:40px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
 input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
 button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px}
 </style>
@@ -17,7 +15,6 @@ function trocarTipo(){
     document.getElementById("form_seguranca").style.display = tipo === "seguranca" ? "block" : "none";
 }
 
-// CPF: 000.000.000-00
 function mascaraCPF(campo){
     let v = campo.value.replace(/\D/g,'');
     v = v.replace(/(\d{3})(\d)/,'$1.$2');
@@ -26,7 +23,6 @@ function mascaraCPF(campo){
     campo.value = v;
 }
 
-// CNPJ: 00.000.000/0000-00
 function mascaraCNPJ(campo){
     let v = campo.value.replace(/\D/g,'');
     v = v.replace(/^(\d{2})(\d)/,'$1.$2');
@@ -36,8 +32,6 @@ function mascaraCNPJ(campo){
     campo.value = v;
 }
 </script>
-</head>
-<body>
 
 <div class="box">
 <h2>Cadastrar</h2>
@@ -47,7 +41,6 @@ function mascaraCNPJ(campo){
     <option value="seguranca">Segurança</option>
 </select>
 
-<!-- EMPRESA -->
 <form id="form_empresa" method="post">
 {% csrf_token %}
 <input type="hidden" name="tipo" value="empresa">
@@ -59,7 +52,6 @@ function mascaraCNPJ(campo){
 <button type="submit">Salvar Empresa</button>
 </form>
 
-<!-- SEGURANÇA -->
 <form id="form_seguranca" method="post" style="display:none;">
 {% csrf_token %}
 <input type="hidden" name="tipo" value="seguranca">
@@ -80,5 +72,4 @@ function mascaraCNPJ(campo){
 
 </div>
 
-</body>
-</html>
+{% endblock %}
