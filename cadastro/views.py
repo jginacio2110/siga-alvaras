@@ -49,6 +49,10 @@ def tela_login(request):
                 erro = "Usuário desativado."
             else:
                 login(request, user)
+                if request.POST.get('lembrar'):
+                    request.session.set_expiry(60 * 60 * 24 * 30)  # 30 dias
+                else:
+                    request.session.set_expiry(0)  # fecha ao sair do navegador
 
                 LogAcao.objects.create(
                     usuario=user,

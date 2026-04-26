@@ -32,21 +32,11 @@ body {
     margin-bottom: 25px;
 }
 
-.logo-area img {
-    width: 85px;
-    vertical-align: middle;
-}
-
 .logo-area span {
     font-size: 36px;
     font-weight: bold;
     color: #0d1b2a;
     vertical-align: middle;
-    margin-left: 10px;
-}
-
-.logo-area small {
-    font-weight: normal;
 }
 
 .form-group {
@@ -62,6 +52,7 @@ body {
 
 .input-box {
     display: flex;
+    position: relative;
     border: 1px solid #5da2ff;
     border-radius: 12px;
     overflow: hidden;
@@ -72,6 +63,7 @@ body {
     flex: 1;
     border: none;
     padding: 12px;
+    padding-right: 45px;
     font-size: 15px;
     background: #eaf2ff;
     outline: none;
@@ -84,6 +76,24 @@ body {
     align-items: center;
     justify-content: center;
     color: #555;
+}
+
+.eye-btn {
+    border: none;
+    cursor: pointer;
+    font-size: 17px;
+    background: transparent;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+}
+
+.eye-btn:hover {
+    background: #d5d5d5;
+    border-radius: 50%;
 }
 
 .checkbox-area {
@@ -152,13 +162,11 @@ body {
 <div class="login-box">
 
     <div class="logo-area">
-        <!-- <img src="{% static 'img/logo.png' %}" alt="Logo"> -->
-        <span>BM <small>SSO</small></span>
+        <span>GSVG</span>
     </div>
 
     {% if erro %}
         <div class="erro">{{ erro }}</div>
-       
     {% endif %}
 
     <form method="POST">
@@ -175,8 +183,8 @@ body {
         <div class="form-group">
             <label>Senha</label>
             <div class="input-box">
-                <input type="password" name="password" placeholder="Senha" required>
-                <div class="input-icon">🔒</div>
+                <input type="password" name="password" id="senha" placeholder="Senha" required>
+                <button type="button" class="eye-btn" onclick="mostrarSenha()">👁</button>
             </div>
         </div>
 
@@ -196,6 +204,21 @@ body {
     </div>
 
 </div>
+
+<script>
+function mostrarSenha() {
+    const campo = document.getElementById("senha");
+    const botao = document.querySelector(".eye-btn");
+
+    if (campo.type === "password") {
+        campo.type = "text";
+        botao.innerHTML = "🙈";
+    } else {
+        campo.type = "password";
+        botao.innerHTML = "👁";
+    }
+}
+</script>
 
 </body>
 </html>
