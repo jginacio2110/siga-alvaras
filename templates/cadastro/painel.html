@@ -3,45 +3,12 @@
 {% block content %}
 
 <style>
-.pagina{
-    display:flex;
+.painel-dashboard{
     background:#eef2f5;
-    min-height:calc(100vh - 55px);
+    min-height:calc(100vh - 155px);
 }
 
-.menu{
-    width:240px;
-    background:#0d1b2a;
-    color:white;
-    padding:20px;
-    box-sizing:border-box;
-}
-
-.menu h2{
-    text-align:center;
-    margin-bottom:30px;
-}
-
-.menu a{
-    display:block;
-    color:white;
-    text-decoration:none;
-    padding:12px;
-    margin:8px 0;
-    background:#1b263b;
-    border-radius:6px;
-}
-
-.menu a:hover{
-    background:#415a77;
-}
-
-.conteudo{
-    flex:1;
-    padding:30px;
-}
-
-.topo{
+.painel-topo{
     background:white;
     padding:20px;
     border-radius:10px;
@@ -66,14 +33,6 @@
 }
 
 @media(max-width:900px){
-    .pagina{
-        flex-direction:column;
-    }
-
-    .menu{
-        width:100%;
-    }
-
     .cards{
         grid-template-columns:1fr 1fr;
     }
@@ -86,63 +45,32 @@
 }
 </style>
 
-<div class="pagina">
+<div class="painel-dashboard">
 
-    <div class="menu">
-        <h2>GSVG</h2>
-
-        {% if request.user.is_superuser %}
-            <a href="/painel/">Dashboard</a>
-            <a href="/cadastrar/">Cadastrar</a>
-            <a href="/pesquisar/">Pesquisar</a>
-            <a href="/usuarios/">Usuários</a>
-            <a href="/logs/">Logs</a>
-            <a href="/admin/">Admin</a>
-        {% else %}
-            {% for p in request.user.permissaousuario_set.all %}
-                {% if p.liberado %}
-                    {% if p.pagina.rota == 'painel' %}
-                        <a href="/painel/">Dashboard</a>
-                    {% elif p.pagina.rota == 'cadastrar' %}
-                        <a href="/cadastrar/">Cadastrar</a>
-                    {% elif p.pagina.rota == 'pesquisar' %}
-                        <a href="/pesquisar/">Pesquisar</a>
-                    {% elif p.pagina.rota == 'usuarios' %}
-                        <a href="/usuarios/">Usuários</a>
-                    {% elif p.pagina.rota == 'logs' %}
-                        <a href="/logs/">Logs</a>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+    <div class="painel-topo">
+        <h1>Dashboard GSVG</h1>
+        <p>Visão geral do sistema</p>
     </div>
 
-    <div class="conteudo">
-        <div class="topo">
-            <h1>Dashboard GSVG</h1>
-            <p>Visão geral do sistema</p>
+    <div class="cards">
+        <div class="card">
+            <h3>Total Empresas</h3>
+            <p>{{ total_empresas }}</p>
         </div>
 
-        <div class="cards">
-            <div class="card">
-                <h3>Total Empresas</h3>
-                <p>{{ total_empresas }}</p>
-            </div>
+        <div class="card">
+            <h3>Empresas Ativas</h3>
+            <p>{{ empresas_ativas }}</p>
+        </div>
 
-            <div class="card">
-                <h3>Empresas Ativas</h3>
-                <p>{{ empresas_ativas }}</p>
-            </div>
+        <div class="card">
+            <h3>Total Seguranças</h3>
+            <p>{{ total_segurancas }}</p>
+        </div>
 
-            <div class="card">
-                <h3>Total Seguranças</h3>
-                <p>{{ total_segurancas }}</p>
-            </div>
-
-            <div class="card">
-                <h3>Seguranças Ativos</h3>
-                <p>{{ segurancas_ativos }}</p>
-            </div>
+        <div class="card">
+            <h3>Seguranças Ativos</h3>
+            <p>{{ segurancas_ativos }}</p>
         </div>
     </div>
 

@@ -11,22 +11,52 @@ body {
     background: #eef2f5;
 }
 
-.topbar {
-    background: #0d1b2a;
-    color: white;
-    height: 55px;
+/* TOPO BRANCO */
+.top-header {
+    height: 105px;
+    background: #ffffff;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 25px;
+    justify-content: space-between;
+    padding: 0 35px;
     box-sizing: border-box;
 }
 
-.logo {
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #d6d2bf;
+    border: 3px solid #6b6758;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: bold;
+    color: #4f4d43;
     font-size: 18px;
 }
 
+.logo-texto h1 {
+    margin: 0;
+    color: #5b5a50;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.logo-texto span {
+    color: #5b5a50;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* USUÁRIO NO CANTO DIREITO */
 .usuario-menu {
     position: relative;
 }
@@ -34,21 +64,87 @@ body {
 .usuario-btn {
     background: none;
     border: none;
-    color: white;
-    font-size: 15px;
+    color: #333;
+    font-size: 14px;
     cursor: pointer;
 }
 
+/* BARRA DO MENU */
+.menu-bar {
+    height: 50px;
+    background: #57564c;
+    border-bottom: 5px solid #c7aa38;
+    display: flex;
+    align-items: center;
+    padding: 0 35px;
+    box-sizing: border-box;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    padding: 17px 22px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.menu a:hover {
+    background: #47463e;
+}
+
+.menu-item {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* SUBMENU */
+.submenu {
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background: white;
+    min-width: 230px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
+    z-index: 999;
+}
+
+.submenu a {
+    display: block;
+    color: #222;
+    padding: 12px 20px;
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.submenu a:hover {
+    background: #f2f2f2;
+    color: #222;
+}
+
+.menu-item:hover .submenu {
+    display: block;
+}
+
+/* DROPDOWN USUÁRIO */
 .dropdown {
     display: none;
     position: absolute;
     right: 0;
-    top: 45px;
+    top: 35px;
     background: white;
     min-width: 190px;
     box-shadow: 0 3px 10px rgba(0,0,0,.25);
     border-radius: 4px;
-    z-index: 999;
+    z-index: 1000;
 }
 
 .dropdown a {
@@ -61,13 +157,24 @@ body {
 .dropdown a:hover {
     background: #f2f2f2;
 }
-</style>
 
+.conteudo {
+    padding: 30px;
+}
+</style>
 </head>
+
 <body>
 
-<div class="topbar">
-    <div class="logo">GSVG</div>
+<header class="top-header">
+    <div class="logo-area">
+        <div class="logo-circle">GSVG</div>
+
+        <div class="logo-texto">
+            <h1>GSVG</h1>
+            <span>SISTEMA DE GESTÃO</span>
+        </div>
+    </div>
 
     <div class="usuario-menu">
         <button type="button" class="usuario-btn">
@@ -80,10 +187,38 @@ body {
             <a href="/logout/">Sair</a>
         </div>
     </div>
-</div>
+</header>
 
-{% block content %}
-{% endblock %}
+<nav class="menu-bar">
+    <div class="menu">
+        <a href="/painel/">DASHBOARD</a>
+
+        <div class="menu-item">
+            <a href="#">CADASTRAR ▾</a>
+            <div class="submenu">
+                <a href="/cadastrar/">Empresa</a>
+                <a href="/cadastrar/">Segurança</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <a href="#">PESQUISAR ▾</a>
+            <div class="submenu">
+                <a href="/pesquisar/">Pesquisar Empresas</a>
+                <a href="/pesquisar/">Pesquisar Seguranças</a>
+            </div>
+        </div>
+
+        <a href="/usuarios/">USUÁRIOS</a>
+        <a href="/logs/">LOGS</a>
+        <a href="/admin/">ADMIN</a>
+    </div>
+</nav>
+
+<main class="conteudo">
+    {% block content %}
+    {% endblock %}
+</main>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
