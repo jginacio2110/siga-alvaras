@@ -7,16 +7,13 @@
     display:flex;
     background:#eef2f5;
     min-height:calc(100vh - 55px);
-    font-family:Arial, sans-serif;
 }
 
 .menu{
     width:240px;
-    min-height:calc(100vh - 55px);
     background:#0d1b2a;
     color:white;
     padding:20px;
-    box-sizing:border-box;
 }
 
 .menu h2{
@@ -47,7 +44,6 @@
     background:white;
     padding:20px;
     border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,.08);
 }
 
 .cards{
@@ -61,115 +57,74 @@
     background:white;
     padding:25px;
     border-radius:12px;
-    box-shadow:0 0 10px rgba(0,0,0,.08);
-}
-
-.card h3{
-    margin:0;
-    color:#333;
-    font-size:16px;
 }
 
 .card p{
-    font-size:34px;
+    font-size:28px;
     font-weight:bold;
-    margin:15px 0 0;
-    color:#0d1b2a;
-}
-
-.rodape{
-    margin-top:25px;
-    background:white;
-    padding:20px;
-    border-radius:10px;
-}
-
-@media(max-width:900px){
-    .pagina{
-        flex-direction:column;
-    }
-
-    .menu{
-        width:100%;
-        min-height:auto;
-    }
-
-    .cards{
-        grid-template-columns:1fr 1fr;
-    }
-}
-
-@media(max-width:600px){
-    .cards{
-        grid-template-columns:1fr;
-    }
 }
 </style>
 
 <div class="pagina">
 
-    <div class="menu">
-        <h2>GSVG</h2>
+<div class="menu">
+<h2>GSVG</h2>
 
-        {% if request.user.is_superuser %}
-            <a href="/painel/">Dashboard</a>
-            <a href="/cadastrar/">Cadastrar</a>
-            <a href="/pesquisar/">Pesquisar</a>
-            <a href="/usuarios/">Usuários</a>
-            <a href="/logs/">Logs</a>
-            <a href="/admin/">Admin</a>
-        {% else %}
-            {% for p in request.user.permissaousuario_set.all %}
-                {% if p.liberado %}
-                    {% if p.pagina.rota == 'painel' %}
-                        <a href="/painel/">Dashboard</a>
-                    {% elif p.pagina.rota == 'cadastrar' %}
-                        <a href="/cadastrar/">Cadastrar</a>
-                    {% elif p.pagina.rota == 'pesquisar' %}
-                        <a href="/pesquisar/">Pesquisar</a>
-                    {% elif p.pagina.rota == 'usuarios' %}
-                        <a href="/usuarios/">Usuários</a>
-                    {% elif p.pagina.rota == 'logs' %}
-                        <a href="/logs/">Logs</a>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
+{% if request.user.is_superuser %}
+    <a href="/painel/">Dashboard</a>
+    <a href="/cadastrar/">Cadastrar</a>
+    <a href="/pesquisar/">Pesquisar</a>
+    <a href="/usuarios/">Usuários</a>
+    <a href="/logs/">Logs</a>
+{% else %}
+    {% for p in request.user.permissaousuario_set.all %}
+        {% if p.liberado %}
+            {% if p.pagina.rota == 'painel' %}
+                <a href="/painel/">Dashboard</a>
+            {% elif p.pagina.rota == 'cadastrar' %}
+                <a href="/cadastrar/">Cadastrar</a>
+            {% elif p.pagina.rota == 'pesquisar' %}
+                <a href="/pesquisar/">Pesquisar</a>
+            {% elif p.pagina.rota == 'usuarios' %}
+                <a href="/usuarios/">Usuários</a>
+            {% elif p.pagina.rota == 'logs' %}
+                <a href="/logs/">Logs</a>
+            {% endif %}
         {% endif %}
-    </div>
+    {% endfor %}
+{% endif %}
+</div>
 
-    <div class="conteudo">
-        <div class="topo">
-            <h1>Dashboard GSVG</h1>
-            <p>Visão geral do sistema</p>
-        </div>
+<div class="conteudo">
 
-        <div class="cards">
-            <div class="card">
-                <h3>Total de Empresas</h3>
-                <p>{{ total_empresas }}</p>
-            </div>
+<div class="topo">
+<h1>Dashboard GSVG</h1>
+<p>Visão geral do sistema</p>
+</div>
 
-            <div class="card">
-                <h3>Empresas Ativas</h3>
-                <p>{{ empresas_ativas }}</p>
-            </div>
+<div class="cards">
+<div class="card">
+<h3>Total Empresas</h3>
+<p>{{ total_empresas }}</p>
+</div>
 
-            <div class="card">
-                <h3>Total de Seguranças</h3>
-                <p>{{ total_segurancas }}</p>
-            </div>
+<div class="card">
+<h3>Empresas Ativas</h3>
+<p>{{ empresas_ativas }}</p>
+</div>
 
-            <div class="card">
-                <h3>Seguranças Ativos</h3>
-                <p>{{ segurancas_ativos }}</p>
-            </div>
-        </div>
+<div class="card">
+<h3>Total Seguranças</h3>
+<p>{{ total_segurancas }}</p>
+</div>
 
-        <div class="rodape">
-            <h2>Resumo</h2>
-            <p>Use o menu lateral para acessar as áreas permitidas do sistema.</p>
-        </div>
-    </div>
+<div class="card">
+<h3>Seguranças Ativos</h3>
+<p>{{ segurancas_ativos }}</p>
+</div>
+</div>
+
+</div>
 
 </div>
 
