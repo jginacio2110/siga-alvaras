@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>GSVG</title>
+
 <style>
 body {
     margin: 0;
@@ -5,7 +11,6 @@ body {
     background: #eef2f5;
 }
 
-/* 🔵 TOPO */
 .topbar {
     background: #0d1b2a;
     color: white;
@@ -17,13 +22,11 @@ body {
     box-sizing: border-box;
 }
 
-/* LOGO ESQUERDA */
 .logo {
     font-weight: bold;
     font-size: 18px;
 }
 
-/* USUÁRIO DIREITA */
 .usuario-menu {
     position: relative;
 }
@@ -36,7 +39,6 @@ body {
     cursor: pointer;
 }
 
-/* DROPDOWN */
 .dropdown {
     display: none;
     position: absolute;
@@ -64,3 +66,28 @@ body {
     display: block;
 }
 </style>
+
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">GSVG</div>
+
+    <div class="usuario-menu">
+        <button class="usuario-btn">
+            👤 {{ request.user.username }} ▾
+        </button>
+
+        <div class="dropdown">
+            <a href="/meus-dados/">Meus dados</a>
+            <a href="/alterar-senha/">Alterar senha</a>
+            <a href="/logout/">Sair</a>
+        </div>
+    </div>
+</div>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
