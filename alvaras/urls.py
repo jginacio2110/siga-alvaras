@@ -7,10 +7,12 @@ from cadastro.views import (
     excluir_empresa, excluir_seguranca,
     usuarios, aplicar_nivel,
     logs, exportar_logs,
-    alternar_usuario, excluir_usuario
+    alternar_usuario, excluir_usuario, alterar_senha, registrar
 )
 
 urlpatterns = [
+    path('alterar-senha/', alterar_senha),
+    path('registrar/', registrar),
     path('', tela_login),
     path('painel/', painel),
     path('cadastrar/', cadastrar),

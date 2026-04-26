@@ -156,10 +156,9 @@ body {
         <span>BM <small>SSO</small></span>
     </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="erro">{{ message }}</div>
-        {% endfor %}
+    {% if erro %}
+        <div class="erro">{{ erro }}</div>
+       
     {% endif %}
 
     <form method="POST">
