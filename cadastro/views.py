@@ -41,12 +41,11 @@ def tela_login(request):
                     descricao='Usuário fez login no sistema'
                 )
 
-                return redirect('/painel')
+                return redirect('/painel/')
         else:
             erro = "Usuário ou senha inválidos."
 
     return render(request, 'cadastro/login.html', {'erro': erro})
-
 
 @login_required
 def painel(request):
