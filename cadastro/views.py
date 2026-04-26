@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Empresa, Seguranca, PaginaSistema, PermissaoUsuario, LogAcao
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
+from .models import Empresa, Seguranca, PaginaSistema, PermissaoUsuario, LogAcao
 import csv
 
 
@@ -19,6 +21,8 @@ def tem_permissao(usuario, rota):
 
 
 def tela_login(request):
+    erro = None
+
     if request.method == 'POST':
         usuario = request.POST['username']
         senha = request.POST['password']
@@ -26,10 +30,22 @@ def tela_login(request):
         user = authenticate(request, username=usuario, password=senha)
 
         if user is not None:
-            login(request, user)
-            return redirect('/painel')
+            if not user.is_active:
+                erro = "Usuário desativado."
+            else:
+                login(request, user)
 
-    return render(request, 'cadastro/login.html')
+                LogAcao.objects.create(
+                    usuario=user,
+                    acao='Login',
+                    descricao='Usuário fez login no sistema'
+                )
+
+                return redirect('/painel')
+        else:
+            erro = "Usuário ou senha inválidos."
+
+    return render(request, 'cadastro/login.html', {'erro': erro})
 
 
 @login_required
@@ -287,25 +303,36 @@ def usuarios(request):
         email = request.POST.get('email', '')
         senha = request.POST['senha']
 
-        usuario = User.objects.create_user(
-            username=username,
-            email=email,
-            password=senha
-        )
+        try:
+            validate_password(senha)
 
-        LogAcao.objects.create(
-            usuario=request.user,
-            acao='Criou usuário',
-            descricao=f'Usuário criado: {usuario.username}'
-        )
+            usuario = User.objects.create_user(
+                username=username,
+                email=email,
+                password=senha
+            )
 
-        return redirect('/usuarios')
+            LogAcao.objects.create(
+                usuario=request.user,
+                acao='Criou usuário',
+                descricao=f'Usuário criado: {usuario.username}'
+            )
+
+            return redirect('/usuarios')
+
+        except ValidationError as e:
+            usuarios = User.objects.all().order_by('username')
+            return render(request, 'cadastro/usuarios.html', {
+                'usuarios': usuarios,
+                'erro': e.messages
+            })
 
     usuarios = User.objects.all().order_by('username')
 
     return render(request, 'cadastro/usuarios.html', {
         'usuarios': usuarios
     })
+
 
 @login_required
 def aplicar_nivel(request, usuario_id, nivel):
@@ -315,7 +342,7 @@ def aplicar_nivel(request, usuario_id, nivel):
     usuario = User.objects.get(id=usuario_id)
 
     if nivel == 'admin':
-        rotas = ['painel', 'cadastrar', 'pesquisar', 'editar', 'excluir', 'usuarios']
+        rotas = ['painel', 'cadastrar', 'pesquisar', 'editar', 'excluir', 'usuarios', 'logs']
         usuario.is_superuser = True
         usuario.is_staff = True
         usuario.save()
@@ -356,6 +383,7 @@ def aplicar_nivel(request, usuario_id, nivel):
     )
 
     return redirect('/usuarios')
+
 
 @login_required
 def logs(request):
@@ -414,3 +442,53 @@ def exportar_logs(request):
         ])
 
     return response
+
+
+@login_required
+def excluir_usuario(request, id):
+    if not request.user.is_superuser:
+        return redirect('/sem-permissao')
+
+    usuario = User.objects.get(id=id)
+
+    if usuario == request.user or usuario.is_superuser:
+        return redirect('/usuarios')
+
+    if request.method == 'POST':
+        nome = usuario.username
+
+        LogAcao.objects.create(
+            usuario=request.user,
+            acao='Excluiu usuário',
+            descricao=f'Usuário excluído: {nome}'
+        )
+
+        usuario.delete()
+        return redirect('/usuarios')
+
+    return render(request, 'cadastro/confirmar_exclusao.html', {
+        'tipo': 'Usuário',
+        'nome': usuario.username
+    })
+
+
+@login_required
+def alternar_usuario(request, id):
+    if not request.user.is_superuser:
+        return redirect('/sem-permissao')
+
+    usuario = User.objects.get(id=id)
+
+    if usuario == request.user:
+        return redirect('/usuarios')
+
+    usuario.is_active = not usuario.is_active
+    usuario.save()
+
+    LogAcao.objects.create(
+        usuario=request.user,
+        acao='Alterou status do usuário',
+        descricao=f'{usuario.username} agora está {"ATIVO" if usuario.is_active else "INATIVO"}'
+    )
+
+    return redirect('/usuarios')

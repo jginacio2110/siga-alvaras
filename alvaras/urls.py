@@ -6,7 +6,8 @@ from cadastro.views import (
     editar_empresa, editar_seguranca,
     excluir_empresa, excluir_seguranca,
     usuarios, aplicar_nivel,
-    logs, exportar_logs
+    logs, exportar_logs,
+    alternar_usuario, excluir_usuario
 )
 
 urlpatterns = [
@@ -19,32 +20,8 @@ urlpatterns = [
     path('permissoes/', permissoes),
     path('usuarios/', usuarios),
     path('aplicar-nivel/<int:usuario_id>/<str:nivel>/', aplicar_nivel),
-
-    # 🔐 SEGURANÇA
-    path('sem-permissao/', sem_permissao),
-
-    # ✏️ EDIÇÃO
-    path('editar-empresa/<int:id>/', editar_empresa),
-    path('editar-seguranca/<int:id>/', editar_seguranca),
-
-    # 🗑️ EXCLUSÃO
-    path('excluir-empresa/<int:id>/', excluir_empresa),
-    path('excluir-seguranca/<int:id>/', excluir_seguranca),
-
-    # ⚙️ ADMIN
-    path('admin/', admin.site.urls),
-]
-
-urlpatterns = [
-    path('', tela_login),
-    path('painel/', painel),
-    path('cadastrar/', cadastrar),
-    path('pesquisar/', pesquisar),
-
-    # 🔐 PERMISSÕES E USUÁRIOS
-    path('permissoes/', permissoes),
-    path('usuarios/', usuarios),
-    path('aplicar-nivel/<int:usuario_id>/<str:nivel>/', aplicar_nivel),
+    path('alternar-usuario/<int:id>/', alternar_usuario),
+    path('excluir-usuario/<int:id>/', excluir_usuario),
 
     # 📊 LOGS
     path('logs/', logs),

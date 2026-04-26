@@ -125,7 +125,7 @@ STATIC_URL = 'static/'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://siga-alvarasv.onrender.com',
+    'https://siga-alvaras.onrender.com',
 ]
 
 SESSION_COOKIE_SECURE = True

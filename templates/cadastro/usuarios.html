@@ -11,12 +11,21 @@ button{background:#0d1b2a;color:white;border:none}
 table{width:100%;margin-top:20px;border-collapse:collapse}
 th,td{padding:10px;border:1px solid #ccc;text-align:left}
 a{color:#0d1b2a;font-weight:bold}
+.erro{color:#8b0000;background:#ffecec;padding:10px;border-radius:5px;margin-bottom:10px}
 </style>
 </head>
 <body>
 
 <div class="box">
 <h2>Criar Usuário</h2>
+
+{% if erro %}
+<div class="erro">
+{% for e in erro %}
+<div>{{ e }}</div>
+{% endfor %}
+</div>
+{% endif %}
 
 <form method="post">
 {% csrf_token %}
@@ -38,14 +47,28 @@ a{color:#0d1b2a;font-weight:bold}
 <th>Superuser</th>
 <th>Permissões</th>
 <th>Nível</th>
+<th>Ações</th>
 </tr>
 
 {% for u in usuarios %}
 <tr>
 <td>{{ u.username }}</td>
 <td>{{ u.email }}</td>
-<td>{{ u.is_active }}</td>
-<td>{{ u.is_superuser }}</td>
+<td>
+{% if u.is_active %}
+    ✔ Ativo
+{% else %}
+    ❌ Inativo
+{% endif %}
+</td>
+
+<td>
+{% if u.is_superuser %}
+    ⭐ Admin
+{% else %}
+    -
+{% endif %}
+</td>
 
 <td>
 <a href="/permissoes/?usuario={{ u.id }}">Configurar</a>
@@ -57,6 +80,17 @@ a{color:#0d1b2a;font-weight:bold}
 <a href="/aplicar-nivel/{{ u.id }}/consulta/">Consulta</a>
 </td>
 
+<td>
+{% if u.id != request.user.id %}
+    {% if u.is_active %}
+        <a href="/alternar-usuario/{{ u.id }}">Desativar</a>
+    {% else %}
+        <a href="/alternar-usuario/{{ u.id }}">Ativar</a>
+    {% endif %}
+{% else %}
+    -
+{% endif %}
+</td>
 </tr>
 {% endfor %}
 </table>
