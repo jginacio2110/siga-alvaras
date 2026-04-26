@@ -6,10 +6,14 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from .models import Empresa, Seguranca, PaginaSistema, PermissaoUsuario, LogAcao
+from functools import wraps
 import csv
 
 
 def tem_permissao(usuario, rota):
+    if not usuario.is_authenticated:
+        return False
+
     if usuario.is_superuser:
         return True
 
@@ -18,6 +22,17 @@ def tem_permissao(usuario, rota):
         pagina__rota=rota,
         liberado=True
     ).exists()
+
+
+def permissao_requerida(rota):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if not tem_permissao(request.user, rota):
+                return redirect('/sem-permissao/')
+            return view_func(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
 
 
 def tela_login(request):
@@ -41,17 +56,19 @@ def tela_login(request):
                     descricao='Usuário fez login no sistema'
                 )
 
+                if not tem_permissao(user, 'painel'):
+                    return redirect('/sem-permissao/')
+
                 return redirect('/painel/')
         else:
             erro = "Usuário ou senha inválidos."
 
     return render(request, 'cadastro/login.html', {'erro': erro})
 
-@login_required
-def painel(request):
-    if not tem_permissao(request.user, 'painel'):
-        return redirect('/sem-permissao')
 
+@login_required
+@permissao_requerida('painel')
+def painel(request):
     total_empresas = Empresa.objects.count()
     empresas_ativas = Empresa.objects.filter(situacao='Ativa').count()
     total_segurancas = Seguranca.objects.count()
@@ -66,10 +83,8 @@ def painel(request):
 
 
 @login_required
+@permissao_requerida('cadastrar')
 def cadastrar(request):
-    if not tem_permissao(request.user, 'cadastrar'):
-        return redirect('/sem-permissao')
-
     empresas = Empresa.objects.all().order_by('nome')
 
     if request.method == 'POST':
@@ -88,7 +103,7 @@ def cadastrar(request):
                 descricao=f'Empresa: {empresa.nome}'
             )
 
-            return redirect('/painel')
+            return redirect('/painel/')
 
         if tipo == 'seguranca':
             empresa_busca = request.POST['empresa_busca']
@@ -107,16 +122,14 @@ def cadastrar(request):
                 descricao=f'Segurança: {seguranca.nome_completo}'
             )
 
-            return redirect('/painel')
+            return redirect('/painel/')
 
     return render(request, 'cadastro/cadastrar.html', {'empresas': empresas})
 
 
 @login_required
+@permissao_requerida('pesquisar')
 def pesquisar(request):
-    if not tem_permissao(request.user, 'pesquisar'):
-        return redirect('/sem-permissao')
-
     busca_empresa = request.GET.get('empresa', '')
     busca_cpf = request.GET.get('cpf', '')
 
@@ -145,7 +158,7 @@ def pesquisar(request):
 @login_required
 def permissoes(request):
     if not request.user.is_superuser:
-        return redirect('/painel')
+        return redirect('/painel/')
 
     usuarios = User.objects.all().order_by('username')
     paginas = PaginaSistema.objects.all().order_by('nome')
@@ -189,10 +202,8 @@ def sem_permissao(request):
 
 
 @login_required
+@permissao_requerida('editar')
 def editar_empresa(request, id):
-    if not tem_permissao(request.user, 'editar'):
-        return redirect('/sem-permissao')
-
     empresa = Empresa.objects.get(id=id)
 
     if request.method == 'POST':
@@ -208,16 +219,14 @@ def editar_empresa(request, id):
             descricao=f'Empresa: {empresa.nome}'
         )
 
-        return redirect('/pesquisar')
+        return redirect('/pesquisar/')
 
     return render(request, 'cadastro/editar_empresa.html', {'empresa': empresa})
 
 
 @login_required
+@permissao_requerida('editar')
 def editar_seguranca(request, id):
-    if not tem_permissao(request.user, 'editar'):
-        return redirect('/sem-permissao')
-
     seguranca = Seguranca.objects.get(id=id)
     empresas = Empresa.objects.all().order_by('nome')
 
@@ -234,7 +243,7 @@ def editar_seguranca(request, id):
             descricao=f'Segurança: {seguranca.nome_completo}'
         )
 
-        return redirect('/pesquisar')
+        return redirect('/pesquisar/')
 
     return render(request, 'cadastro/editar_seguranca.html', {
         'seguranca': seguranca,
@@ -243,10 +252,8 @@ def editar_seguranca(request, id):
 
 
 @login_required
+@permissao_requerida('excluir')
 def excluir_empresa(request, id):
-    if not tem_permissao(request.user, 'excluir'):
-        return redirect('/sem-permissao')
-
     empresa = Empresa.objects.get(id=id)
 
     if request.method == 'POST':
@@ -259,7 +266,7 @@ def excluir_empresa(request, id):
         )
 
         empresa.delete()
-        return redirect('/pesquisar')
+        return redirect('/pesquisar/')
 
     return render(request, 'cadastro/confirmar_exclusao.html', {
         'tipo': 'Empresa',
@@ -268,10 +275,8 @@ def excluir_empresa(request, id):
 
 
 @login_required
+@permissao_requerida('excluir')
 def excluir_seguranca(request, id):
-    if not tem_permissao(request.user, 'excluir'):
-        return redirect('/sem-permissao')
-
     seguranca = Seguranca.objects.get(id=id)
 
     if request.method == 'POST':
@@ -284,7 +289,7 @@ def excluir_seguranca(request, id):
         )
 
         seguranca.delete()
-        return redirect('/pesquisar')
+        return redirect('/pesquisar/')
 
     return render(request, 'cadastro/confirmar_exclusao.html', {
         'tipo': 'Segurança',
@@ -293,10 +298,8 @@ def excluir_seguranca(request, id):
 
 
 @login_required
+@permissao_requerida('usuarios')
 def usuarios(request):
-    if not tem_permissao(request.user, 'usuarios'):
-        return redirect('/sem-permissao')
-
     if request.method == 'POST':
         username = request.POST['username']
         email = request.POST.get('email', '')
@@ -311,13 +314,27 @@ def usuarios(request):
                 password=senha
             )
 
+            rotas = ['painel', 'pesquisar']
+
+            for rota in rotas:
+                pagina, criado = PaginaSistema.objects.get_or_create(
+                    rota=rota,
+                    defaults={'nome': rota.capitalize()}
+                )
+
+                PermissaoUsuario.objects.create(
+                    usuario=usuario,
+                    pagina=pagina,
+                    liberado=True
+                )
+
             LogAcao.objects.create(
                 usuario=request.user,
                 acao='Criou usuário',
-                descricao=f'Usuário criado: {usuario.username}'
+                descricao=f'Usuário criado: {usuario.username} com nível consulta'
             )
 
-            return redirect('/usuarios')
+            return redirect('/usuarios/')
 
         except ValidationError as e:
             usuarios = User.objects.all().order_by('username')
@@ -336,7 +353,7 @@ def usuarios(request):
 @login_required
 def aplicar_nivel(request, usuario_id, nivel):
     if not request.user.is_superuser:
-        return redirect('/sem-permissao')
+        return redirect('/sem-permissao/')
 
     usuario = User.objects.get(id=usuario_id)
 
@@ -359,7 +376,7 @@ def aplicar_nivel(request, usuario_id, nivel):
         usuario.save()
 
     else:
-        return redirect('/usuarios')
+        return redirect('/usuarios/')
 
     PermissaoUsuario.objects.filter(usuario=usuario).delete()
 
@@ -381,14 +398,12 @@ def aplicar_nivel(request, usuario_id, nivel):
         descricao=f'Usuário: {usuario.username} | Nível: {nivel}'
     )
 
-    return redirect('/usuarios')
+    return redirect('/usuarios/')
 
 
 @login_required
+@permissao_requerida('logs')
 def logs(request):
-    if not tem_permissao(request.user, 'logs'):
-        return redirect('/sem-permissao')
-
     usuario_id = request.GET.get('usuario', '')
     acao = request.GET.get('acao', '')
     data_inicio = request.GET.get('data_inicio', '')
@@ -420,10 +435,8 @@ def logs(request):
 
 
 @login_required
+@permissao_requerida('logs')
 def exportar_logs(request):
-    if not tem_permissao(request.user, 'logs'):
-        return redirect('/sem-permissao')
-
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="logs.csv"'
 
@@ -446,12 +459,12 @@ def exportar_logs(request):
 @login_required
 def excluir_usuario(request, id):
     if not request.user.is_superuser:
-        return redirect('/sem-permissao')
+        return redirect('/sem-permissao/')
 
     usuario = User.objects.get(id=id)
 
     if usuario == request.user or usuario.is_superuser:
-        return redirect('/usuarios')
+        return redirect('/usuarios/')
 
     if request.method == 'POST':
         nome = usuario.username
@@ -463,7 +476,7 @@ def excluir_usuario(request, id):
         )
 
         usuario.delete()
-        return redirect('/usuarios')
+        return redirect('/usuarios/')
 
     return render(request, 'cadastro/confirmar_exclusao.html', {
         'tipo': 'Usuário',
@@ -474,12 +487,12 @@ def excluir_usuario(request, id):
 @login_required
 def alternar_usuario(request, id):
     if not request.user.is_superuser:
-        return redirect('/sem-permissao')
+        return redirect('/sem-permissao/')
 
     usuario = User.objects.get(id=id)
 
     if usuario == request.user:
-        return redirect('/usuarios')
+        return redirect('/usuarios/')
 
     usuario.is_active = not usuario.is_active
     usuario.save()
@@ -490,4 +503,4 @@ def alternar_usuario(request, id):
         descricao=f'{usuario.username} agora está {"ATIVO" if usuario.is_active else "INATIVO"}'
     )
 
-    return redirect('/usuarios')
+    return redirect('/usuarios/')
