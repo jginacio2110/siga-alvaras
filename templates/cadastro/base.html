@@ -61,10 +61,6 @@ body {
 .dropdown a:hover {
     background: #f2f2f2;
 }
-
-.usuario-menu:hover .dropdown {
-    display: block;
-}
 </style>
 
 </head>
@@ -74,7 +70,7 @@ body {
     <div class="logo">GSVG</div>
 
     <div class="usuario-menu">
-        <button class="usuario-btn">
+        <button type="button" class="usuario-btn">
             👤 {{ request.user.username }} ▾
         </button>
 
@@ -88,6 +84,26 @@ body {
 
 {% block content %}
 {% endblock %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btn = document.querySelector('.usuario-btn');
+    const dropdown = document.querySelector('.dropdown');
+
+    btn.onclick = function(e) {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    };
+
+    dropdown.onclick = function(e) {
+        e.stopPropagation();
+    };
+
+    document.addEventListener('click', function() {
+        dropdown.style.display = 'none';
+    });
+});
+</script>
 
 </body>
 </html>
