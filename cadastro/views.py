@@ -142,6 +142,11 @@ def carteirinha(request, id):
     # =====================
     escrever_centro(assinante, 1500, 820, 12)
 
+    p.showPage()
+    p.save()
+
+    return response
+
 @login_required
 def teste_grade_carteirinha(request):
     modelo = finders.find('cadastro/img/modelo_carteirinha.png')
