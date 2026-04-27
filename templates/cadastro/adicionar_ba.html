@@ -3,7 +3,8 @@
 
 <style>
 
-select {
+/* REMOVE DUPLICAÇÃO E FORÇA PADRÃO */
+.ba-card select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -17,10 +18,18 @@ select {
     padding: 12px;
 }
 
-select:focus {
+.ba-card select:focus {
     border-color: #c7aa38;
     box-shadow: 0 0 0 2px rgba(199,170,56,.2);
 }
+
+/* TENTA MELHORAR COR DO DROPDOWN */
+.ba-card option:checked {
+    background: #f5f1dc;
+    color: #0d1b2a;
+}
+
+/* ===== LAYOUT ===== */
 
 .ba-card{
     background:white;
@@ -36,11 +45,6 @@ select:focus {
     color:white;
     padding:25px;
     border-bottom:5px solid #c7aa38;
-}
-
-.ba-topo h2{
-    margin:0;
-    font-size:24px;
 }
 
 .ba-topo span{
@@ -65,58 +69,32 @@ select:focus {
 }
 
 label{
-    display:block;
     font-size:11px;
     font-weight:bold;
     color:#6b6758;
-    letter-spacing:1px;
-    margin-bottom:8px;
 }
 
-.grid-2{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:25px;
-}
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:25px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:25px;}
+.grid-2-igual{display:grid;grid-template-columns:1fr 1fr;gap:25px;}
 
-.grid-3{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:25px;
-}
-
-.grid-2-igual{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-}
-
-input, select, textarea{
+input, textarea{
     width:100%;
     padding:14px;
     border:1px solid #cfcbb8;
     border-radius:10px;
-    font-size:14px;
-    box-sizing:border-box;
     background:white;
 }
 
 input:focus,
-select:focus,
 textarea:focus{
-    outline:none;
     border-color:#c7aa38;
-    box-shadow:0 0 0 2px rgba(199,170,56,.20);
+    box-shadow:0 0 0 2px rgba(199,170,56,.2);
 }
 
-textarea{
-    min-height:150px;
-    resize:vertical;
-}
+textarea{min-height:150px;}
 
-.autocomplete-box{
-    position:relative;
-}
+.autocomplete-box{position:relative;}
 
 .resultados-vigilante{
     position:absolute;
@@ -127,29 +105,34 @@ textarea{
     border:1px solid #cfcbb8;
     border-radius:10px;
     box-shadow:0 6px 15px rgba(0,0,0,.15);
-    z-index:999;
     display:none;
-    overflow:hidden;
-}
-
-.item-vigilante{
-    padding:12px;
-    cursor:pointer;
-    border-bottom:1px solid #eee;
 }
 
 .item-vigilante:hover{
     background:#f5f1dc;
 }
 
-.item-vigilante strong{
-    display:block;
-    color:#0d1b2a;
+/* 🔥 BOTÃO CORRIGIDO DEFINITIVO */
+.ba-card .btn-salvar {
+    background: #0d1b2a !important;
+    color: white !important;
+    border-radius: 10px;
+    padding: 16px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.item-vigilante span{
-    font-size:12px;
-    color:#57564c;
+.ba-card .btn-salvar:hover {
+    background: #c7aa38 !important;
+    color: #0d1b2a !important;
+}
+
+.ba-card .btn-cancelar {
+    background: #e8e6dc;
+    color: #57564c;
+    border-radius: 10px;
+    padding: 16px;
+    text-align:center;
 }
 
 .aviso{
@@ -160,7 +143,6 @@ textarea{
     padding:14px;
     border-radius:10px;
     font-size:11px;
-    font-weight:bold;
     text-align:center;
 }
 
@@ -171,38 +153,7 @@ textarea{
     gap:15px;
 }
 
-.btn-salvar {
-    background: #0d1b2a;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 16px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.btn-salvar:hover {
-    background: #c7aa38;
-    color: #0d1b2a;
-}
-
-.btn-cancelar {
-    background: #e8e6dc;
-    color: #57564c;
-    border-radius: 10px;
-    padding: 16px;
-    font-weight: bold;
-    text-decoration: none;
-    text-align: center;
-    transition: 0.2s;
-}
-
-.btn-cancelar:hover {
-    background: #d6d2bf;
-}
-</style></style>
+</style>
 
 <div class="ba-card">
 
@@ -220,7 +171,7 @@ textarea{
             <div class="grid-2">
                 <div>
                     <label>TÍTULO DA OCORRÊNCIA *</label>
-                    <input type="text" name="titulo" placeholder="Ex: Apreensão de simulacro em posto bancário" required>
+                    <input type="text" name="titulo" required>
                 </div>
 
                 <div>
@@ -234,115 +185,45 @@ textarea{
             <br>
 
             <div class="grid-3">
-                <div>
-                    <label>DATA DO FATO</label>
-                    <input type="date" name="data_fato" required>
-                </div>
-
-                <div>
-                    <label>HORA APROXIMADA</label>
-                    <input type="time" name="hora">
-                </div>
-
-                <div>
-                    <label>MUNICÍPIO</label>
-                    <select name="municipio" required>
-                        <option value="">Selecione...</option>
-                        {% for m in municipios %}
-                            <option value="{{ m.id }}">{{ m.nome }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <input type="date" name="data_fato" required>
+                <input type="time" name="hora">
+                <select name="municipio" required>
+                    <option value="">Selecione...</option>
+                    {% for m in municipios %}
+                        <option value="{{ m.id }}">{{ m.nome }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="secao">👥 PARTES ENVOLVIDAS</div>
 
             <div class="grid-2-igual">
-                <div>
-                    <label>EMPRESA DE SEGURANÇA</label>
-                    <select name="empresa">
-                        <option value="">Não Aplicável / Outros</option>
-                        {% for e in empresas %}
-                            <option value="{{ e.id }}">{{ e.razao_social }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <select name="empresa">
+                    <option value="">Não Aplicável / Outros</option>
+                    {% for e in empresas %}
+                        <option value="{{ e.id }}">{{ e.razao_social }}</option>
+                    {% endfor %}
+                </select>
 
                 <div class="autocomplete-box">
-                    <label>VIGILANTE (CPF OU NOME)</label>
-                    <input type="text" id="vigilanteBusca" placeholder="Pesquisar vigilante..." autocomplete="off">
+                    <input type="text" id="vigilanteBusca" placeholder="Pesquisar vigilante...">
                     <input type="hidden" name="vigilante_id" id="vigilanteId">
                     <div id="resultadosVigilante" class="resultados-vigilante"></div>
                 </div>
             </div>
 
-            <div class="secao">☰ HISTÓRICO DA OCORRÊNCIA</div>
+            <div class="secao">☰ HISTÓRICO</div>
 
-            <textarea name="historico" placeholder="Descreva detalhadamente os fatos, providências tomadas e meios utilizados..." required></textarea>
+            <textarea name="historico" required></textarea>
 
             <div class="aviso">
-                ESTE RELATO SERÁ ANEXADO AO PRONTUÁRIO DA EMPRESA E DO VIGILANTE PARA FINS DE PONTUAÇÃO ADMINISTRATIVA.
+                ESTE RELATO SERÁ ANEXADO AO PRONTUÁRIO
             </div>
 
             <div class="botoes">
-                <button class="btn-salvar" type="submit">📝 FINALIZAR REGISTRO BA</button>
+                <button class="btn-salvar">FINALIZAR REGISTRO BA</button>
                 <a href="/fiscalizacao/" class="btn-cancelar">CANCELAR</a>
             </div>
         </form>
     </div>
 </div>
-
-<script>
-const inputVigilante = document.getElementById('vigilanteBusca');
-const inputId = document.getElementById('vigilanteId');
-const resultados = document.getElementById('resultadosVigilante');
-
-inputVigilante.addEventListener('input', function(){
-    const termo = this.value.trim();
-    inputId.value = '';
-
-    if(termo.length < 2){
-        resultados.style.display = 'none';
-        resultados.innerHTML = '';
-        return;
-    }
-
-    fetch(`/buscar-vigilantes/?q=${encodeURIComponent(termo)}`)
-        .then(response => response.json())
-        .then(data => {
-            resultados.innerHTML = '';
-
-            if(data.resultados.length === 0){
-                resultados.style.display = 'none';
-                return;
-            }
-
-            data.resultados.forEach(v => {
-                const item = document.createElement('div');
-                item.className = 'item-vigilante';
-                item.innerHTML = `
-                    <strong>${v.nome}</strong>
-                    <span>CPF: ${v.cpf} | Empresa: ${v.empresa}</span>
-                `;
-
-                item.onclick = function(){
-                    inputVigilante.value = `${v.nome} - ${v.cpf}`;
-                    inputId.value = v.id;
-                    resultados.style.display = 'none';
-                };
-
-                resultados.appendChild(item);
-            });
-
-            resultados.style.display = 'block';
-        });
-});
-
-document.addEventListener('click', function(e){
-    if(!e.target.closest('.autocomplete-box')){
-        resultados.style.display = 'none';
-    }
-});
-</script>
-
-{% endblock %}
