@@ -73,6 +73,18 @@ class Seguranca(models.Model):
     data_nascimento = models.DateField(blank=True, null=True)
     data_admissao = models.DateField(blank=True, null=True)
 
+    # ✅ CAMPO ADICIONADO
+    SITUACAO_CHOICES = [
+        ('Ativo', 'Ativo'),
+        ('Inativo', 'Inativo'),
+    ]
+
+    situacao = models.CharField(
+        max_length=20,
+        choices=SITUACAO_CHOICES,
+        default='Ativo'
+    )
+
     def __str__(self):
         return self.nome_completo
 
