@@ -7,16 +7,19 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from .models import Empresa, Seguranca, Municipio, PaginaSistema, PermissaoUsuario, LogAcao
 from functools import wraps
 from datetime import date
+import csv
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
 from reportlab.lib.units import mm
-from .models import DadosUsuario
-from reportlab.pdfgen import canvas
-import csv
+
+from .models import (
+    Empresa, Seguranca, Municipio, PaginaSistema,
+    PermissaoUsuario, LogAcao, DadosUsuario
+)
 
 @login_required
 def meus_dados(request):
@@ -82,6 +85,7 @@ def carteirinha(request, id):
         p.rect(x, y, card_w, card_h, fill=0, stroke=1)
 
         p.setFillColor(colors.HexColor("#6d5f2a"))
+
         for i in range(4, int(card_w/mm), 8):
             p.circle(x + i*mm, y + card_h - 4*mm, 1.6*mm, fill=1)
             p.circle(x + i*mm, y + 4*mm, 1.6*mm, fill=1)
@@ -97,7 +101,7 @@ def carteirinha(request, id):
         p.setFont("Helvetica-Bold", tamanho)
         p.drawString(x, y, valor or '')
 
-    # Frente
+    # FRENTE
     desenhar_borda(x1, y)
 
     p.setFont("Helvetica-Bold", 8)
@@ -110,7 +114,7 @@ def carteirinha(request, id):
     p.rect(x1 + card_w - 37*mm, y + 21*mm, 27*mm, 36*mm, fill=1, stroke=1)
     p.setFillColor(colors.black)
     p.setFont("Helvetica-Bold", 9)
-    p.drawCentredString(x1 + card_w - 23.5*mm, y + 38*mm, "FOTO")
+    p.drawCentredString(x1 + card_w - 23.5*mm, y + 38*mm, "SEM FOTO")
 
     texto(x1 + 10*mm, y + 45*mm, "NOME", seguranca.nome_completo.upper(), 9)
     texto(x1 + 10*mm, y + 34*mm, "ORGANIZAÇÃO", seguranca.empresa.razao_social.upper(), 8)
@@ -128,7 +132,7 @@ def carteirinha(request, id):
     p.setFont("Helvetica-Bold", 6)
     p.drawCentredString(x1 + card_w/2, y + 3*mm, "VÁLIDA SOMENTE COM APRESENTAÇÃO DE DOCUMENTO DE IDENTIDADE")
 
-    # Verso
+    # VERSO
     desenhar_borda(x2, y)
 
     texto(x2 + 10*mm, y + 57*mm, "FILIAÇÃO", "", 8)
@@ -148,56 +152,6 @@ def carteirinha(request, id):
     p.save()
 
     return response
-
-
-@login_required
-def carteirinha(request, id):
-    seguranca = Seguranca.objects.get(id=id)
-    dados = DadosUsuario.objects.filter(usuario=request.user).first()
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; filename="carteirinha.pdf"'
-
-    p = canvas.Canvas(response)
-
-    # TEXTO
-    p.drawString(100, 750, f"NOME: {seguranca.nome_completo}")
-    p.drawString(100, 730, f"EMPRESA: {seguranca.empresa.razao_social}")
-    p.drawString(100, 710, f"CPF: {seguranca.cpf}")
-    p.drawString(100, 690, f"RG: {seguranca.rg}")
-    p.drawString(100, 670, f"REGISTRO: {seguranca.registro}")
-
-    # 🔥 AQUI É O QUE VOCÊ PEDIU
-    if dados:
-        rodape = f"{dados.graduacao} - {dados.nome_guerra}"
-        p.drawString(100, 200, rodape)
-
-    p.showPage()
-    p.save()
-
-    return response
-
-
-@login_required
-def meus_dados(request):
-    dados, _ = DadosUsuario.objects.get_or_create(usuario=request.user)
-
-    if request.method == 'POST':
-        dados.graduacao = request.POST.get('graduacao')
-        dados.nome_guerra = request.POST.get('nome_guerra')
-        dados.nome_completo = request.POST.get('nome_completo')
-        dados.cpf = request.POST.get('cpf')
-        dados.data_nascimento = request.POST.get('data_nascimento')
-        dados.cidade_nascimento = request.POST.get('cidade_nascimento')
-        dados.uf_nascimento = request.POST.get('uf_nascimento')
-        dados.pai = request.POST.get('pai')
-        dados.mae = request.POST.get('mae')
-        dados.save()
-
-        return redirect('/meus-dados/')
-
-    return render(request, 'cadastro/meus_dados.html', {'dados': dados})
-
 
 def pesquisar_empresa(request):
     busca_empresa = request.GET.get('empresa', '')
