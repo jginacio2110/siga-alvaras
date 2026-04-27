@@ -2,92 +2,305 @@
 {% block content %}
 
 <style>
-.form-card{
+.ba-card{
     background:white;
     border-radius:12px;
-    padding:30px;
-    max-width:900px;
+    max-width:1050px;
     margin:auto;
     box-shadow:0 2px 8px rgba(0,0,0,.08);
+    overflow:hidden;
 }
 
-.titulo{
-    font-size:22px;
+.ba-topo{
+    background:#111827;
+    color:white;
+    padding:25px;
+}
+
+.ba-topo h2{
+    margin:0;
+    font-size:24px;
+}
+
+.ba-topo span{
+    font-size:11px;
+    letter-spacing:3px;
     font-weight:bold;
-    margin-bottom:20px;
+    color:#cbd5e1;
 }
 
-.grid{
+.ba-corpo{
+    padding:35px;
+}
+
+.secao{
+    font-size:12px;
+    font-weight:bold;
+    color:#2563eb;
+    letter-spacing:3px;
+    margin:25px 0 15px;
+    border-bottom:1px solid #e5e7eb;
+    padding-bottom:10px;
+}
+
+.grid-2{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+}
+
+.grid-3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:25px;
+}
+
+.grid-2-igual{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:15px;
+    gap:25px;
+}
+
+label{
+    display:block;
+    font-size:11px;
+    font-weight:bold;
+    color:#94a3b8;
+    letter-spacing:1px;
+    margin-bottom:8px;
 }
 
 input, select, textarea{
     width:100%;
-    padding:12px;
-    border:1px solid #ddd;
-    border-radius:8px;
+    padding:14px;
+    border:1px solid #dbe3ef;
+    border-radius:12px;
+    font-size:14px;
+    box-sizing:border-box;
 }
 
 textarea{
-    height:120px;
+    min-height:150px;
+    resize:vertical;
 }
 
-.botao{
+.autocomplete-box{
+    position:relative;
+}
+
+.resultados-vigilante{
+    position:absolute;
+    top:76px;
+    left:0;
+    right:0;
+    background:white;
+    border:1px solid #dbe3ef;
+    border-radius:10px;
+    box-shadow:0 6px 15px rgba(0,0,0,.15);
+    z-index:999;
+    display:none;
+    overflow:hidden;
+}
+
+.item-vigilante{
+    padding:12px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+}
+
+.item-vigilante:hover{
+    background:#eef4ff;
+}
+
+.item-vigilante strong{
+    display:block;
+    color:#111827;
+}
+
+.item-vigilante span{
+    font-size:12px;
+    color:#64748b;
+}
+
+.aviso{
     margin-top:20px;
-    width:100%;
-    padding:15px;
+    background:#eaf3ff;
+    color:#1d4ed8;
+    padding:14px;
+    border-radius:12px;
+    font-size:11px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.botoes{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:1fr 160px;
+    gap:15px;
+}
+
+.btn-salvar{
     background:#111827;
     color:white;
     border:none;
-    border-radius:10px;
+    border-radius:12px;
+    padding:16px;
     font-weight:bold;
+    letter-spacing:1px;
+    cursor:pointer;
+}
+
+.btn-cancelar{
+    background:#f1f5f9;
+    color:#475569;
+    text-align:center;
+    border-radius:12px;
+    padding:16px;
+    font-weight:bold;
+    text-decoration:none;
 }
 </style>
 
-<div class="form-card">
-    <div class="titulo">Boletim de Atendimento (BA)</div>
+<div class="ba-card">
 
-    <form method="post">
-        {% csrf_token %}
+    <div class="ba-topo">
+        <h2>Boletim de Atendimento (BA)</h2>
+        <span>DOCUMENTO OFICIAL DE INCIDENTE</span>
+    </div>
 
-        <input type="text" name="titulo" placeholder="Título da ocorrência" required>
+    <div class="ba-corpo">
+        <form method="post">
+            {% csrf_token %}
 
-        <div class="grid">
-            <input type="date" name="data_fato" required>
-            <input type="time" name="hora">
-        </div>
+            <div class="secao">ℹ INFORMAÇÕES GERAIS</div>
 
-        <div class="grid">
-            <select name="municipio" required>
-                <option value="">Município</option>
-                {% for m in municipios %}
-                    <option value="{{ m.id }}">{{ m.nome }}</option>
-                {% endfor %}
-            </select>
+            <div class="grid-2">
+                <div>
+                    <label>TÍTULO DA OCORRÊNCIA *</label>
+                    <input type="text" name="titulo" placeholder="Ex: Apreensão de simulacro em posto bancário" required>
+                </div>
 
-            <select name="empresa">
-                <option value="">Empresa</option>
-                {% for e in empresas %}
-                    <option value="{{ e.id }}">{{ e.razao_social }}</option>
-                {% endfor %}
-            </select>
-        </div>
+                <div>
+                    <label>NATUREZA DA OCORRÊNCIA *</label>
+                    <select name="natureza">
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+            </div>
 
-        <select name="vigilante">
-            <option value="">Vigilante (CPF ou nome)</option>
-            {% for s in segurancas %}
-                <option value="{{ s.id }}">
-                    {{ s.nome_completo }} - {{ s.cpf }}
-                </option>
-            {% endfor %}
-        </select>
+            <br>
 
-        <textarea name="historico" placeholder="Descreva a ocorrência"></textarea>
+            <div class="grid-3">
+                <div>
+                    <label>DATA DO FATO</label>
+                    <input type="date" name="data_fato" required>
+                </div>
 
-        <button class="botao">FINALIZAR REGISTRO BA</button>
-    </form>
+                <div>
+                    <label>HORA APROXIMADA</label>
+                    <input type="time" name="hora">
+                </div>
+
+                <div>
+                    <label>MUNICÍPIO</label>
+                    <select name="municipio" required>
+                        <option value="">Selecione...</option>
+                        {% for m in municipios %}
+                            <option value="{{ m.id }}">{{ m.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="secao">👥 PARTES ENVOLVIDAS</div>
+
+            <div class="grid-2-igual">
+                <div>
+                    <label>EMPRESA DE SEGURANÇA</label>
+                    <select name="empresa">
+                        <option value="">Não Aplicável / Outros</option>
+                        {% for e in empresas %}
+                            <option value="{{ e.id }}">{{ e.razao_social }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="autocomplete-box">
+                    <label>VIGILANTE (CPF OU NOME)</label>
+                    <input type="text" id="vigilanteBusca" placeholder="Pesquisar vigilante..." autocomplete="off">
+                    <input type="hidden" name="vigilante_id" id="vigilanteId">
+                    <div id="resultadosVigilante" class="resultados-vigilante"></div>
+                </div>
+            </div>
+
+            <div class="secao">☰ HISTÓRICO DA OCORRÊNCIA</div>
+
+            <textarea name="historico" placeholder="Descreva detalhadamente os fatos, providências tomadas e meios utilizados..." required></textarea>
+
+            <div class="aviso">
+                ESTE RELATO SERÁ ANEXADO AO PRONTUÁRIO DA EMPRESA E DO VIGILANTE PARA FINS DE PONTUAÇÃO ADMINISTRATIVA.
+            </div>
+
+            <div class="botoes">
+                <button class="btn-salvar" type="submit">📝 FINALIZAR REGISTRO BA</button>
+                <a href="/fiscalizacao/" class="btn-cancelar">CANCELAR</a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+const inputVigilante = document.getElementById('vigilanteBusca');
+const inputId = document.getElementById('vigilanteId');
+const resultados = document.getElementById('resultadosVigilante');
+
+inputVigilante.addEventListener('input', function(){
+    const termo = this.value.trim();
+    inputId.value = '';
+
+    if(termo.length < 2){
+        resultados.style.display = 'none';
+        resultados.innerHTML = '';
+        return;
+    }
+
+    fetch(`/buscar-vigilantes/?q=${encodeURIComponent(termo)}`)
+        .then(response => response.json())
+        .then(data => {
+            resultados.innerHTML = '';
+
+            if(data.resultados.length === 0){
+                resultados.style.display = 'none';
+                return;
+            }
+
+            data.resultados.forEach(v => {
+                const item = document.createElement('div');
+                item.className = 'item-vigilante';
+                item.innerHTML = `
+                    <strong>${v.nome}</strong>
+                    <span>CPF: ${v.cpf} | Empresa: ${v.empresa}</span>
+                `;
+
+                item.onclick = function(){
+                    inputVigilante.value = `${v.nome} - ${v.cpf}`;
+                    inputId.value = v.id;
+                    resultados.style.display = 'none';
+                };
+
+                resultados.appendChild(item);
+            });
+
+            resultados.style.display = 'block';
+        });
+});
+
+document.addEventListener('click', function(e){
+    if(!e.target.closest('.autocomplete-box')){
+        resultados.style.display = 'none';
+    }
+});
+</script>
 
 {% endblock %}

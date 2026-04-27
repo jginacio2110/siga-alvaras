@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from functools import wraps
 from datetime import date
 from django.contrib.staticfiles import finders
@@ -803,7 +803,6 @@ def registrar(request):
 def adicionar_ba(request):
     municipios = Municipio.objects.all().order_by('nome')
     empresas = Empresa.objects.all().order_by('razao_social')
-    segurancas = Seguranca.objects.all().order_by('nome_completo')
 
     if request.method == 'POST':
         BoletimAtendimento.objects.create(
@@ -812,7 +811,7 @@ def adicionar_ba(request):
             hora=request.POST.get('hora') or None,
             municipio_id=request.POST.get('municipio'),
             empresa_id=request.POST.get('empresa') or None,
-            vigilante_id=request.POST.get('vigilante') or None,
+            vigilante_id=request.POST.get('vigilante_id') or None,
             historico=request.POST.get('historico'),
             usuario=request.user
         )
@@ -821,6 +820,28 @@ def adicionar_ba(request):
 
     return render(request, 'cadastro/adicionar_ba.html', {
         'municipios': municipios,
-        'empresas': empresas,
-        'segurancas': segurancas
+        'empresas': empresas
     })
+
+
+@login_required
+@permissao_requerida('fiscalizacao')
+def buscar_vigilantes(request):
+    termo = request.GET.get('q', '')
+
+    vigilantes = Seguranca.objects.filter(
+        Q(nome_completo__icontains=termo) |
+        Q(cpf__icontains=termo)
+    ).select_related('empresa')[:10]
+
+    dados = []
+
+    for v in vigilantes:
+        dados.append({
+            'id': v.id,
+            'nome': v.nome_completo,
+            'cpf': v.cpf,
+            'empresa': v.empresa.razao_social if v.empresa else ''
+        })
+
+    return JsonResponse({'resultados': dados})
