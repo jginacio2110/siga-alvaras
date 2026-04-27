@@ -125,11 +125,12 @@ function mascaraCEP(campo){
 
     <div id="campo_municipio_rs">
         <select name="municipio" id="municipio_select">
-            <option value="">Selecione o município</option>
-            {% for municipio in municipios %}
-                <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
-            {% endfor %}
-        </select>
+    <option value="">Seleção do município</option>
+
+    {% for municipio in municipios %}
+        <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
+    {% endfor %}
+</select>
     </div>
 
     <div id="campo_municipio_texto" style="display:none;">
