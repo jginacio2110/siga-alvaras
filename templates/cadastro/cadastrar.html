@@ -10,7 +10,6 @@ button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;bo
 </style>
 
 <script>
-
 function trocarEstado(){
     let estado = document.getElementById("estado").value;
     let campoRS = document.getElementById("campo_municipio_rs");
@@ -87,6 +86,7 @@ function mascaraCEP(campo){
     <option value="seguranca">Segurança</option>
 </select>
 
+<!-- ================= EMPRESA ================= -->
 <form id="form_empresa" method="post">
 {% csrf_token %}
 <input type="hidden" name="tipo" value="empresa">
@@ -125,12 +125,11 @@ function mascaraCEP(campo){
 
     <div id="campo_municipio_rs">
         <select name="municipio" id="municipio_select">
-    <option value="">Seleção do município</option>
-
-    {% for municipio in municipios %}
-        <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
-    {% endfor %}
-</select>
+            <option value="">Seleção do município</option>
+            {% for municipio in municipios %}
+                <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <div id="campo_municipio_texto" style="display:none;">
@@ -148,6 +147,7 @@ function mascaraCEP(campo){
 <button type="submit">Salvar Empresa</button>
 </form>
 
+<!-- ================= SEGURANÇA ================= -->
 <form id="form_seguranca" method="post" style="display:none;">
 {% csrf_token %}
 <input type="hidden" name="tipo" value="seguranca">
@@ -159,7 +159,7 @@ function mascaraCEP(campo){
 
 <datalist id="lista_empresas">
     {% for empresa in empresas %}
-        <option value="{{ empresa.razao_social }} - {{ empresa.cnpj }}"></option>
+        <option value="{{ empresa.razao_social }}{% if empresa.cnpj %} - {{ empresa.cnpj }}{% endif %}"></option>
     {% endfor %}
 </datalist>
 
