@@ -107,52 +107,50 @@ def carteirinha(request, id):
         p.drawCentredString(px, py, str(texto or '').upper())
 
     # =====================
-    # FRENTE - AJUSTE FINO
+    # FRENTE - MAIS À DIREITA
     # =====================
-    escrever(seguranca.nome_completo, 125, 395, 10)
+    escrever(seguranca.nome_completo, 145, 385, 10)
 
-    escrever(seguranca.empresa.razao_social, 125, 475, 10)
+    escrever(seguranca.empresa.razao_social, 145, 460, 10)
 
-    escrever("VIGIA", 125, 555, 10)
+    escrever("VIGIA", 145, 535, 10)
 
-    escrever(seguranca.rg, 125, 645, 9)
-    escrever(seguranca.registro, 420, 645, 9)
+    escrever(seguranca.rg, 145, 620, 9)
+    escrever(seguranca.registro, 440, 620, 9)
 
-    escrever(data_br(hoje), 125, 730, 9)
-    escrever(data_br(validade), 420, 730, 9)
-
-
-    # =====================
-    # VERSO - AJUSTE FINO
-    # =====================
-    escrever(seguranca.pai, 1210, 280, 10)
-
-    escrever(seguranca.mae, 1210, 360, 10)
-
-    escrever(naturalidade, 1340, 440, 10)
+    escrever(data_br(hoje), 145, 700, 9)
+    escrever(data_br(validade), 440, 700, 9)
 
 
     # =====================
-    # DATAS SEPARADAS NAS BARRAS
+    # VERSO - PAI / MÃE AJUSTADOS
+    # =====================
+    escrever(seguranca.pai, 1200, 255, 10)
+
+    escrever(seguranca.mae, 1200, 325, 10)
+
+    escrever(naturalidade, 1325, 410, 10)
+
+
+    # =====================
+    # DATAS
     # =====================
     dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
     da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
-    # DATA DE NASCIMENTO
-    escrever(dn_d, 1360, 500, 9)
-    escrever(dn_m, 1420, 500, 9)
-    escrever(dn_a, 1490, 500, 9)
+    escrever(dn_d, 1360, 485, 9)
+    escrever(dn_m, 1420, 485, 9)
+    escrever(dn_a, 1490, 485, 9)
 
-    # DATA DE ADMISSÃO
-    escrever(da_d, 1785, 500, 9)
-    escrever(da_m, 1845, 500, 9)
-    escrever(da_a, 1915, 500, 9)
+    escrever(da_d, 1785, 485, 9)
+    escrever(da_m, 1845, 485, 9)
+    escrever(da_a, 1915, 485, 9)
 
 
     # =====================
     # ASSINATURA
     # =====================
-    escrever_centro(assinante, 1535, 835, 12)
+    escrever_centro(assinante, 1535, 820, 12)
 
     p.showPage()
     p.save()
