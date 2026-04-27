@@ -106,45 +106,47 @@ def carteirinha(request, id):
         px, py = pos(x, y)
         p.drawCentredString(px, py, str(texto or '').upper())
 
-   # =====================
-    # FRENTE - AJUSTADO
     # =====================
-    escrever(seguranca.nome_completo, 135, 395, 9)
-
-    escrever(seguranca.empresa.razao_social, 135, 475, 9)
-
-    escrever("VIGIA", 135, 555, 9)
-
-    escrever(seguranca.rg, 135, 640, 9)
-    escrever(seguranca.registro, 420, 640, 9)
-
-    escrever(data_br(hoje), 135, 720, 9)
-    escrever(data_br(validade), 420, 720, 9)
-
-
+    # FRENTE - AJUSTE FINO
     # =====================
-    # VERSO - AJUSTADO
-    # =====================
-    escrever(seguranca.pai, 1220, 260, 9)
-    escrever(seguranca.mae, 1220, 330, 9)
-    escrever(naturalidade, 1340, 400, 9)
+    escrever(seguranca.nome_completo, 125, 395, 10)
+
+    escrever(seguranca.empresa.razao_social, 125, 475, 10)
+
+    escrever("VIGIA", 125, 555, 10)
+
+    escrever(seguranca.rg, 125, 645, 9)
+    escrever(seguranca.registro, 420, 645, 9)
+
+    escrever(data_br(hoje), 125, 730, 9)
+    escrever(data_br(validade), 420, 730, 9)
 
 
     # =====================
-    # DATAS COM NÚMEROS SEPARADOS
+    # VERSO - AJUSTE FINO
+    # =====================
+    escrever(seguranca.pai, 1210, 280, 10)
+
+    escrever(seguranca.mae, 1210, 360, 10)
+
+    escrever(naturalidade, 1340, 440, 10)
+
+
+    # =====================
+    # DATAS SEPARADAS NAS BARRAS
     # =====================
     dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
     da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
-    # nascimento
-    escrever(dn_d, 1370, 500, 9)
-    escrever(dn_m, 1425, 500, 9)
+    # DATA DE NASCIMENTO
+    escrever(dn_d, 1360, 500, 9)
+    escrever(dn_m, 1420, 500, 9)
     escrever(dn_a, 1490, 500, 9)
 
-    # admissão
-    escrever(da_d, 1800, 500, 9)
-    escrever(da_m, 1855, 500, 9)
-    escrever(da_a, 1920, 500, 9)
+    # DATA DE ADMISSÃO
+    escrever(da_d, 1785, 500, 9)
+    escrever(da_m, 1845, 500, 9)
+    escrever(da_a, 1915, 500, 9)
 
 
     # =====================
@@ -187,14 +189,14 @@ def teste_grade_carteirinha(request):
     p.setFillColor(colors.red)
 
     # linhas verticais
-    for x in range(0, 2049, 50):
+    for x in range(0, 2049, 10):
         px1, py1 = pos(x, 0)
         px2, py2 = pos(x, 1000)
         p.line(px1, py1, px2, py2)
         p.drawString(px1 + 1, py1 - 8, str(x))
 
     # linhas horizontais
-    for y in range(0, 1001, 50):
+    for y in range(0, 1001, 10):
         px1, py1 = pos(0, y)
         px2, py2 = pos(2048, y)
         p.line(px1, py1, px2, py2)
