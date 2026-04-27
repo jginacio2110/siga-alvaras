@@ -107,41 +107,98 @@ def carteirinha(request, id):
         p.drawCentredString(px, py, str(texto or '').upper())
 
     # =====================
-        # =====================
-    # FRENTE - AJUSTADA
+    # FRENTE (COORDENADAS REAIS)
     # =====================
-    escrever(seguranca.nome_completo, 90, 412, 8)
-    escrever(seguranca.empresa.razao_social, 90, 502, 8)
-    escrever("VIGIA", 90, 585, 8)
+    escrever(seguranca.nome_completo, 120, 370, 9)
 
-    escrever(seguranca.rg, 90, 675, 8)
-    escrever(seguranca.registro, 375, 675, 8)
+    escrever(seguranca.empresa.razao_social, 120, 445, 9)
 
-    escrever(data_br(hoje), 90, 765, 8)
-    escrever(data_br(validade), 375, 765, 8)
+    escrever("VIGIA", 120, 525, 9)
+
+    escrever(seguranca.rg, 120, 610, 9)
+    escrever(seguranca.registro, 400, 610, 9)
+
+    escrever(data_br(hoje), 120, 690, 9)
+    escrever(data_br(validade), 400, 690, 9)
 
     # =====================
-    # VERSO - AJUSTADO PARA SAIR NA FRENTE DOS RÓTULOS
+    # VERSO (ALINHADO COM OS RÓTULOS)
     # =====================
-    escrever(seguranca.pai, 1200, 275, 8)
-    escrever(seguranca.mae, 1200, 355, 8)
-    escrever(naturalidade, 1295, 435, 8)
+    # PAI
+    escrever(seguranca.pai, 1220, 260, 9)
 
+    # MÃE
+    escrever(seguranca.mae, 1220, 330, 9)
+
+    # NATURALIDADE
+    escrever(naturalidade, 1340, 400, 9)
+
+    # =====================
+    # DATAS (EM CIMA DOS / /)
+    # =====================
     dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
     da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
-    # DATA NASCIMENTO - dentro dos espaços / /
-    escrever(dn_d, 1385, 508, 8)
-    escrever(dn_m, 1445, 508, 8)
-    escrever(dn_a, 1505, 508, 8)
+    # nascimento
+    escrever(dn_d, 1365, 475, 9)
+    escrever(dn_m, 1420, 475, 9)
+    escrever(dn_a, 1480, 475, 9)
 
-    # DATA ADMISSÃO - dentro dos espaços / /
-    escrever(da_d, 1810, 508, 8)
-    escrever(da_m, 1870, 508, 8)
-    escrever(da_a, 1930, 508, 8)
+    # admissão
+    escrever(da_d, 1760, 475, 9)
+    escrever(da_m, 1815, 475, 9)
+    escrever(da_a, 1875, 475, 9)
 
-    # ASSINATURA
-    escrever_centro(assinante, 1535, 865, 12)
+    # =====================
+    # ASSINATURA (SUBIU E CENTRALIZOU)
+    # =====================
+    escrever_centro(assinante, 1535, 835, 13)
+
+    p.showPage()
+    p.save()
+
+    return response
+
+@login_required
+def teste_grade_carteirinha(request):
+    modelo = finders.find('cadastro/img/modelo_carteirinha.png')
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="teste_grade_carteirinha.pdf"'
+
+    p = canvas.Canvas(response, pagesize=landscape(A4))
+    largura, altura = landscape(A4)
+
+    img_w = 270 * mm
+    img_h = img_w * (1000 / 2048)
+
+    x0 = (largura - img_w) / 2
+    y0 = (altura - img_h) / 2
+
+    p.drawImage(modelo, x0, y0, width=img_w, height=img_h)
+
+    def pos(x, y):
+        px = x0 + (x / 2048) * img_w
+        py = y0 + img_h - (y / 1000) * img_h
+        return px, py
+
+    p.setFont("Helvetica", 5)
+    p.setStrokeColor(colors.red)
+    p.setFillColor(colors.red)
+
+    # linhas verticais
+    for x in range(0, 2049, 50):
+        px1, py1 = pos(x, 0)
+        px2, py2 = pos(x, 1000)
+        p.line(px1, py1, px2, py2)
+        p.drawString(px1 + 1, py1 - 8, str(x))
+
+    # linhas horizontais
+    for y in range(0, 1001, 50):
+        px1, py1 = pos(0, y)
+        px2, py2 = pos(2048, y)
+        p.line(px1, py1, px2, py2)
+        p.drawString(px1 - 18, py1, str(y))
 
     p.showPage()
     p.save()
