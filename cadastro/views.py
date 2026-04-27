@@ -164,7 +164,7 @@ def cadastrar(request):
             cnpj = empresa_busca.split(' - ')[-1]
             empresa = Empresa.objects.get(cnpj=cnpj)
 
-            Seguranca.objects.create(
+            seguranca = Seguranca.objects.create(
                 cpf=request.POST.get('cpf'),
                 rg=request.POST.get('rg'),
                 registro=request.POST.get('registro'),
@@ -176,7 +176,6 @@ def cadastrar(request):
                 data_admissao=request.POST.get('data_admissao') or None,
                 empresa=empresa
             )
-            
 
             LogAcao.objects.create(
                 usuario=request.user,

@@ -7,25 +7,51 @@ body{font-family:Arial;background:#f1f1f1}
 input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}
 button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px;cursor:pointer}
 .linha{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;margin-top:12px;font-weight:bold;color:#333}
 </style>
 
 <script>
-function trocarEstado(){
-    let estado = document.getElementById("estado").value;
-    let campoRS = document.getElementById("campo_municipio_rs");
-    let campoTexto = document.getElementById("campo_municipio_texto");
-    let municipioSelect = document.getElementById("municipio_select");
-    let municipioTexto = document.getElementById("municipio_texto");
+function trocarEstadoEmpresa(){
+    let estado = document.getElementById("estado_empresa").value;
+    let campoRS = document.getElementById("campo_municipio_rs_empresa");
+    let campoTexto = document.getElementById("campo_municipio_texto_empresa");
+    let municipioSelect = document.getElementById("municipio_select_empresa");
+    let municipioTexto = document.getElementById("municipio_texto_empresa");
 
     if(estado === "RS"){
         campoRS.style.display = "block";
         campoTexto.style.display = "none";
+        municipioSelect.required = true;
+        municipioTexto.required = false;
         municipioTexto.value = "";
     } else {
         campoRS.style.display = "none";
         campoTexto.style.display = "block";
+        municipioSelect.required = false;
         municipioSelect.value = "";
-        municipioTexto.value = "";
+        municipioTexto.required = true;
+    }
+}
+
+function trocarEstadoSeguranca(){
+    let estado = document.getElementById("estado_seguranca").value;
+    let campoRS = document.getElementById("campo_naturalidade_rs");
+    let campoTexto = document.getElementById("campo_naturalidade_texto");
+    let naturalidadeSelect = document.getElementById("naturalidade_select");
+    let naturalidadeTexto = document.getElementById("naturalidade_texto");
+
+    if(estado === "RS"){
+        campoRS.style.display = "block";
+        campoTexto.style.display = "none";
+        naturalidadeSelect.required = true;
+        naturalidadeTexto.required = false;
+        naturalidadeTexto.value = "";
+    } else {
+        campoRS.style.display = "none";
+        campoTexto.style.display = "block";
+        naturalidadeSelect.required = false;
+        naturalidadeSelect.value = "";
+        naturalidadeTexto.required = true;
     }
 }
 
@@ -76,6 +102,11 @@ function mascaraCEP(campo){
     v = v.replace(/(\d{5})(\d)/,'$1-$2');
     campo.value = v;
 }
+
+document.addEventListener("DOMContentLoaded", function(){
+    trocarEstadoEmpresa();
+    trocarEstadoSeguranca();
+});
 </script>
 
 <div class="box">
@@ -113,7 +144,7 @@ function mascaraCEP(campo){
 </div>
 
 <div class="linha">
-    <select name="estado" id="estado" required onchange="trocarEstado()">
+    <select name="estado" id="estado_empresa" required onchange="trocarEstadoEmpresa()">
         <option value="RS" selected>Rio Grande do Sul</option>
         <option value="SC">Santa Catarina</option>
         <option value="PR">Paraná</option>
@@ -123,17 +154,17 @@ function mascaraCEP(campo){
         <option value="Outro">Outro Estado</option>
     </select>
 
-    <div id="campo_municipio_rs">
-        <select name="municipio" id="municipio_select">
-            <option value="">Seleção do município</option>
+    <div id="campo_municipio_rs_empresa">
+        <select name="municipio" id="municipio_select_empresa">
+            <option value="">Selecione o município</option>
             {% for municipio in municipios %}
                 <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
             {% endfor %}
         </select>
     </div>
 
-    <div id="campo_municipio_texto" style="display:none;">
-        <input type="text" name="municipio_texto" id="municipio_texto" placeholder="Digite o município">
+    <div id="campo_municipio_texto_empresa" style="display:none;">
+        <input type="text" name="municipio_texto" id="municipio_texto_empresa" placeholder="Digite o município">
     </div>
 </div>
 
@@ -152,14 +183,14 @@ function mascaraCEP(campo){
 {% csrf_token %}
 <input type="hidden" name="tipo" value="seguranca">
 
-<input type="text" name="cpf" maxlength="14" placeholder="CPF do Segurança" oninput="mascaraCPF(this)" required>
+<input type="text" name="nome_completo" placeholder="Nome completo do segurança" required>
 
 <div class="linha">
-    <input type="text" name="rg" placeholder="RG">
-    <input type="text" name="registro" placeholder="Registro">
+    <input type="text" name="rg" placeholder="RG" required>
+    <input type="text" name="cpf" maxlength="14" placeholder="CPF do segurança" oninput="mascaraCPF(this)" required>
 </div>
 
-<input type="text" name="nome_completo" placeholder="Nome Completo" required>
+<input type="text" name="registro" placeholder="Registro">
 
 <div class="linha">
     <input type="text" name="pai" placeholder="Filiação - Pai">
@@ -167,27 +198,43 @@ function mascaraCEP(campo){
 </div>
 
 <div class="linha">
-    <select name="naturalidade">
-        <option value="">Naturalidade</option>
-        {% for municipio in municipios %}
-            <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
-        {% endfor %}
+    <select name="estado_seguranca" id="estado_seguranca" required onchange="trocarEstadoSeguranca()">
+        <option value="RS" selected>Rio Grande do Sul</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="PR">Paraná</option>
+        <option value="SP">São Paulo</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="Outro">Outro Estado</option>
     </select>
 
-    <input type="date" name="data_nascimento" placeholder="Data de Nascimento">
+    <div id="campo_naturalidade_rs">
+        <select name="naturalidade" id="naturalidade_select">
+            <option value="">Município / Naturalidade</option>
+            {% for municipio in municipios %}
+                <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="campo_naturalidade_texto" style="display:none;">
+        <input type="text" name="naturalidade_texto" id="naturalidade_texto" placeholder="Digite o município manualmente">
+    </div>
 </div>
 
-<div class="linha">
-    <input type="date" name="data_admissao" placeholder="Data de Admissão">
-</div>
+<label>Data de nascimento</label>
+<input type="date" name="data_nascimento">
 
-<input list="lista_empresas" name="empresa_busca" placeholder="Digite razão social ou CNPJ da empresa" required>
+<input list="lista_empresas" name="empresa_busca" placeholder="Razão social ou CNPJ da empresa" required>
 
 <datalist id="lista_empresas">
     {% for empresa in empresas %}
         <option value="{{ empresa.razao_social }}{% if empresa.cnpj %} - {{ empresa.cnpj }}{% endif %}"></option>
     {% endfor %}
 </datalist>
+
+<label>Data de admissão na empresa</label>
+<input type="date" name="data_admissao">
 
 <button type="submit">Salvar Segurança</button>
 </form>
