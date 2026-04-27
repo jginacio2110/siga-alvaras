@@ -115,11 +115,11 @@ def carteirinha(request, id):
 
     escrever("VIGIA", 145, 555, 12)
 
-    escrever(seguranca.rg, 145, 650, 10)
+    escrever(seguranca.rg, 145, 635, 10)
     escrever(seguranca.registro, 440, 635, 10)
 
-    escrever(data_br(hoje), 145, 720, 10)
-    escrever(data_br(validade), 440, 705, 10)
+    escrever(data_br(hoje), 145, 730, 10)
+    escrever(data_br(validade), 440, 730, 10)
 
 
     # =====================
@@ -139,12 +139,12 @@ def carteirinha(request, id):
     da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
     escrever(dn_d, 1335, 480, 10)
-    escrever(dn_m, 1370, 480, 10)
+    escrever(dn_m, 1385, 480, 10)
     escrever(dn_a, 1425, 480, 10)
 
     escrever(da_d, 1810, 480, 10)
-    escrever(da_m, 1855, 480, 10)
-    escrever(da_a, 1880, 480, 10)
+    escrever(da_m, 1850, 480, 10)
+    escrever(da_a, 1890, 480, 10)
 
 
     # =====================
