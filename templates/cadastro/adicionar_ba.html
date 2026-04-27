@@ -3,7 +3,7 @@
 
 <style>
 
-/* REMOVE DUPLICAÇÃO E FORÇA PADRÃO */
+/* ===== SELECT PADRÃO ===== */
 .ba-card select {
     appearance: none;
     -webkit-appearance: none;
@@ -14,7 +14,6 @@
 
     border: 1px solid #cfcbb8;
     border-radius: 10px;
-
     padding: 12px;
 }
 
@@ -23,10 +22,8 @@
     box-shadow: 0 0 0 2px rgba(199,170,56,.2);
 }
 
-/* TENTA MELHORAR COR DO DROPDOWN */
 .ba-card option:checked {
     background: #f5f1dc;
-    color: #0d1b2a;
 }
 
 /* ===== LAYOUT ===== */
@@ -47,10 +44,13 @@
     border-bottom:5px solid #c7aa38;
 }
 
+.ba-topo h2{
+    margin:0;
+}
+
 .ba-topo span{
     font-size:11px;
     letter-spacing:3px;
-    font-weight:bold;
     color:#e8dfb5;
 }
 
@@ -92,13 +92,17 @@ textarea:focus{
     box-shadow:0 0 0 2px rgba(199,170,56,.2);
 }
 
-textarea{min-height:150px;}
+textarea{
+    min-height:150px;
+}
 
-.autocomplete-box{position:relative;}
+.autocomplete-box{
+    position:relative;
+}
 
 .resultados-vigilante{
     position:absolute;
-    top:76px;
+    top:70px;
     left:0;
     right:0;
     background:white;
@@ -106,13 +110,20 @@ textarea{min-height:150px;}
     border-radius:10px;
     box-shadow:0 6px 15px rgba(0,0,0,.15);
     display:none;
+    z-index:999;
+}
+
+.item-vigilante{
+    padding:10px;
+    cursor:pointer;
 }
 
 .item-vigilante:hover{
     background:#f5f1dc;
 }
 
-/* 🔥 BOTÃO CORRIGIDO DEFINITIVO */
+/* ===== BOTÕES ===== */
+
 .ba-card .btn-salvar {
     background: #0d1b2a !important;
     color: white !important;
@@ -133,12 +144,14 @@ textarea{min-height:150px;}
     border-radius: 10px;
     padding: 16px;
     text-align:center;
+    text-decoration:none;
 }
+
+/* ===== OUTROS ===== */
 
 .aviso{
     margin-top:20px;
     background:#f5f1dc;
-    color:#57564c;
     border:1px solid #d6c275;
     padding:14px;
     border-radius:10px;
@@ -166,16 +179,16 @@ textarea{min-height:150px;}
         <form method="post">
             {% csrf_token %}
 
-            <div class="secao">ℹ INFORMAÇÕES GERAIS</div>
+            <div class="secao">INFORMAÇÕES GERAIS</div>
 
             <div class="grid-2">
                 <div>
-                    <label>TÍTULO DA OCORRÊNCIA *</label>
+                    <label>TÍTULO DA OCORRÊNCIA</label>
                     <input type="text" name="titulo" required>
                 </div>
 
                 <div>
-                    <label>NATUREZA DA OCORRÊNCIA *</label>
+                    <label>NATUREZA</label>
                     <select name="natureza">
                         <option value="">Selecione...</option>
                     </select>
@@ -195,7 +208,7 @@ textarea{min-height:150px;}
                 </select>
             </div>
 
-            <div class="secao">👥 PARTES ENVOLVIDAS</div>
+            <div class="secao">PARTES ENVOLVIDAS</div>
 
             <div class="grid-2-igual">
                 <select name="empresa">
@@ -212,7 +225,7 @@ textarea{min-height:150px;}
                 </div>
             </div>
 
-            <div class="secao">☰ HISTÓRICO</div>
+            <div class="secao">HISTÓRICO</div>
 
             <textarea name="historico" required></textarea>
 
@@ -221,9 +234,48 @@ textarea{min-height:150px;}
             </div>
 
             <div class="botoes">
-                <button class="btn-salvar">FINALIZAR REGISTRO BA</button>
+                <button type="submit" class="btn-salvar">FINALIZAR REGISTRO BA</button>
                 <a href="/fiscalizacao/" class="btn-cancelar">CANCELAR</a>
             </div>
+
         </form>
     </div>
 </div>
+
+<script>
+const input = document.getElementById('vigilanteBusca');
+const box = document.getElementById('resultadosVigilante');
+const hidden = document.getElementById('vigilanteId');
+
+input.addEventListener('input', function(){
+    const termo = this.value;
+
+    if(termo.length < 2){
+        box.style.display = 'none';
+        return;
+    }
+
+    fetch(`/buscar-vigilantes/?q=${termo}`)
+    .then(r => r.json())
+    .then(data => {
+        box.innerHTML = '';
+        box.style.display = 'block';
+
+        data.resultados.forEach(v => {
+            const div = document.createElement('div');
+            div.className = 'item-vigilante';
+            div.innerText = v.nome + ' - ' + v.cpf;
+
+            div.onclick = () => {
+                input.value = div.innerText;
+                hidden.value = v.id;
+                box.style.display = 'none';
+            };
+
+            box.appendChild(div);
+        });
+    });
+});
+</script>
+
+{% endblock %}
