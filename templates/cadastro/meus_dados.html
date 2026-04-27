@@ -1,30 +1,96 @@
 {% extends 'cadastro/base.html' %}
 {% block content %}
 
-<div class="box">
+<style>
+.box{
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    max-width:900px;
+    margin:20px auto;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+.linha{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    border-bottom:1px solid #ccc;
+}
+.linha label{
+    padding:10px;
+    font-weight:bold;
+    background:#f5f5f5;
+}
+.linha input{
+    padding:10px;
+    border:none;
+    outline:none;
+}
+button{
+    margin-top:20px;
+    padding:12px;
+    width:100%;
+    background:#0d1b2a;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+</style>
 
+<div class="box">
 <h2>Meus dados</h2>
 
 <form method="post">
 {% csrf_token %}
 
-<input type="text" name="graduacao" placeholder="Graduação/Função" value="{{ dados.graduacao }}">
-<input type="text" name="nome_guerra" placeholder="Nome de guerra" value="{{ dados.nome_guerra }}">
+<div class="linha">
+    <label>Graduação/Função:</label>
+    <input type="text" name="graduacao" value="{{ dados.graduacao|default_if_none:'' }}">
+</div>
 
-<input type="text" name="nome_completo" placeholder="Nome completo" value="{{ dados.nome_completo }}">
-<input type="text" name="cpf" placeholder="CPF" value="{{ dados.cpf }}">
-<input type="date" name="data_nascimento" value="{{ dados.data_nascimento }}">
+<div class="linha">
+    <label>Nome de guerra:</label>
+    <input type="text" name="nome_guerra" value="{{ dados.nome_guerra|default_if_none:'' }}">
+</div>
 
-<input type="text" name="cidade_nascimento" placeholder="Cidade" value="{{ dados.cidade_nascimento }}">
-<input type="text" name="uf_nascimento" placeholder="UF" value="{{ dados.uf_nascimento }}">
+<div class="linha">
+    <label>Nome completo:</label>
+    <input type="text" name="nome_completo" value="{{ dados.nome_completo|default_if_none:'' }}">
+</div>
 
-<input type="text" name="pai" placeholder="Nome do pai" value="{{ dados.pai }}">
-<input type="text" name="mae" placeholder="Nome da mãe" value="{{ dados.mae }}">
+<div class="linha">
+    <label>CPF:</label>
+    <input type="text" name="cpf" value="{{ dados.cpf|default_if_none:'' }}">
+</div>
+
+<div class="linha">
+    <label>Data de nascimento:</label>
+    <input type="date" name="data_nascimento" value="{{ dados.data_nascimento|date:'Y-m-d' }}">
+</div>
+
+<div class="linha">
+    <label>Cidade de nascimento:</label>
+    <input type="text" name="cidade_nascimento" value="{{ dados.cidade_nascimento|default_if_none:'' }}">
+</div>
+
+<div class="linha">
+    <label>UF de nascimento:</label>
+    <input type="text" name="uf_nascimento" maxlength="2" value="{{ dados.uf_nascimento|default_if_none:'' }}">
+</div>
+
+<div class="linha">
+    <label>Nome do pai:</label>
+    <input type="text" name="pai" value="{{ dados.pai|default_if_none:'' }}">
+</div>
+
+<div class="linha">
+    <label>Nome da mãe:</label>
+    <input type="text" name="mae" value="{{ dados.mae|default_if_none:'' }}">
+</div>
 
 <button type="submit">Salvar</button>
 
 </form>
-
 </div>
 
 {% endblock %}

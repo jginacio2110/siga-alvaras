@@ -9,9 +9,146 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from .models import Empresa, Seguranca, Municipio, PaginaSistema, PermissaoUsuario, LogAcao
 from functools import wraps
+from datetime import date
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib import colors
+from reportlab.lib.units import mm
 from .models import DadosUsuario
 from reportlab.pdfgen import canvas
 import csv
+
+@login_required
+def meus_dados(request):
+    dados, _ = DadosUsuario.objects.get_or_create(usuario=request.user)
+
+    if request.method == 'POST':
+        dados.graduacao = request.POST.get('graduacao')
+        dados.nome_guerra = request.POST.get('nome_guerra')
+        dados.nome_completo = request.POST.get('nome_completo')
+        dados.cpf = request.POST.get('cpf')
+        dados.data_nascimento = request.POST.get('data_nascimento') or None
+        dados.cidade_nascimento = request.POST.get('cidade_nascimento')
+        dados.uf_nascimento = request.POST.get('uf_nascimento')
+        dados.pai = request.POST.get('pai')
+        dados.mae = request.POST.get('mae')
+        dados.save()
+
+        return redirect('/meus-dados/')
+
+    return render(request, 'cadastro/meus_dados.html', {'dados': dados})
+
+
+@login_required
+def carteirinha(request, id):
+    seguranca = Seguranca.objects.select_related('empresa', 'naturalidade').get(id=id)
+    dados = DadosUsuario.objects.filter(usuario=request.user).first()
+
+    hoje = date.today()
+
+    try:
+        validade = hoje.replace(year=hoje.year + 2)
+    except ValueError:
+        validade = hoje.replace(month=2, day=28, year=hoje.year + 2)
+
+    def data_br(data):
+        return data.strftime('%d/%m/%Y') if data else ''
+
+    assinante = ''
+    if dados:
+        assinante = f"{dados.graduacao or ''} - {dados.nome_guerra or ''}".strip(' -')
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="carteirinha_{seguranca.id}.pdf"'
+
+    p = canvas.Canvas(response, pagesize=landscape(A4))
+    largura, altura = landscape(A4)
+
+    card_w = 125 * mm
+    card_h = 78 * mm
+    y = altura - card_h - 25 * mm
+    x1 = 18 * mm
+    x2 = x1 + card_w + 10 * mm
+
+    def desenhar_borda(x, y):
+        p.setFillColor(colors.HexColor("#c7b56b"))
+        p.rect(x, y, card_w, card_h, fill=1, stroke=0)
+
+        p.setFillColor(colors.HexColor("#8fa8c8"))
+        p.rect(x + 5*mm, y + 5*mm, card_w - 10*mm, card_h - 10*mm, fill=1, stroke=0)
+
+        p.setStrokeColor(colors.black)
+        p.setLineWidth(1)
+        p.rect(x, y, card_w, card_h, fill=0, stroke=1)
+
+        p.setFillColor(colors.HexColor("#6d5f2a"))
+        for i in range(4, int(card_w/mm), 8):
+            p.circle(x + i*mm, y + card_h - 4*mm, 1.6*mm, fill=1)
+            p.circle(x + i*mm, y + 4*mm, 1.6*mm, fill=1)
+
+        for i in range(4, int(card_h/mm), 8):
+            p.circle(x + 4*mm, y + i*mm, 1.6*mm, fill=1)
+            p.circle(x + card_w - 4*mm, y + i*mm, 1.6*mm, fill=1)
+
+    def texto(x, y, label, valor, tamanho=8):
+        p.setFillColor(colors.black)
+        p.setFont("Helvetica-Bold", 6)
+        p.drawString(x, y + 9, label)
+        p.setFont("Helvetica-Bold", tamanho)
+        p.drawString(x, y, valor or '')
+
+    # Frente
+    desenhar_borda(x1, y)
+
+    p.setFont("Helvetica-Bold", 8)
+    p.drawCentredString(x1 + card_w/2, y + card_h - 12*mm, "ESTADO DO RIO GRANDE DO SUL")
+    p.drawCentredString(x1 + card_w/2, y + card_h - 16*mm, "SECRETARIA DA SEGURANÇA PÚBLICA")
+    p.drawCentredString(x1 + card_w/2, y + card_h - 20*mm, "BRIGADA MILITAR - COE")
+    p.drawCentredString(x1 + card_w/2, y + card_h - 24*mm, "GRUPAMENTO DE SUPERVISÃO DE VIGILÂNCIA E GUARDAS")
+
+    p.setFillColor(colors.lightgrey)
+    p.rect(x1 + card_w - 37*mm, y + 21*mm, 27*mm, 36*mm, fill=1, stroke=1)
+    p.setFillColor(colors.black)
+    p.setFont("Helvetica-Bold", 9)
+    p.drawCentredString(x1 + card_w - 23.5*mm, y + 38*mm, "FOTO")
+
+    texto(x1 + 10*mm, y + 45*mm, "NOME", seguranca.nome_completo.upper(), 9)
+    texto(x1 + 10*mm, y + 34*mm, "ORGANIZAÇÃO", seguranca.empresa.razao_social.upper(), 8)
+
+    p.setFillColor(colors.red)
+    p.setFont("Helvetica-Bold", 10)
+    p.drawString(x1 + 10*mm, y + 27*mm, "VIGIA")
+
+    texto(x1 + 10*mm, y + 18*mm, "RG nº", seguranca.rg, 8)
+    texto(x1 + 50*mm, y + 18*mm, "REGISTRO nº", seguranca.registro, 8)
+
+    texto(x1 + 10*mm, y + 8*mm, "EMITIDA EM", data_br(hoje), 8)
+    texto(x1 + 50*mm, y + 8*mm, "VÁLIDO ATÉ", data_br(validade), 8)
+
+    p.setFont("Helvetica-Bold", 6)
+    p.drawCentredString(x1 + card_w/2, y + 3*mm, "VÁLIDA SOMENTE COM APRESENTAÇÃO DE DOCUMENTO DE IDENTIDADE")
+
+    # Verso
+    desenhar_borda(x2, y)
+
+    texto(x2 + 10*mm, y + 57*mm, "FILIAÇÃO", "", 8)
+    texto(x2 + 10*mm, y + 49*mm, "PAI", (seguranca.pai or '').upper(), 8)
+    texto(x2 + 10*mm, y + 39*mm, "MÃE", (seguranca.mae or '').upper(), 8)
+
+    naturalidade = seguranca.naturalidade.nome if seguranca.naturalidade else ''
+    texto(x2 + 10*mm, y + 29*mm, "NATURALIDADE", naturalidade.upper(), 8)
+
+    texto(x2 + 10*mm, y + 18*mm, "DATA DE NASCIMENTO", data_br(seguranca.data_nascimento), 8)
+    texto(x2 + 62*mm, y + 18*mm, "DATA DE ADMISSÃO NA EMPRESA", data_br(seguranca.data_admissao), 8)
+
+    p.setFont("Helvetica-Bold", 9)
+    p.drawCentredString(x2 + card_w/2, y + 8*mm, assinante.upper())
+
+    p.showPage()
+    p.save()
+
+    return response
+
 
 @login_required
 def carteirinha(request, id):
