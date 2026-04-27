@@ -129,7 +129,7 @@ def carteirinha(request, id):
 
     escrever(seguranca.mae, 1200, 325, 12)
 
-    escrever(naturalidade, 1325, 395, 12)
+    escrever(naturalidade, 1325, 385, 12)
 
 
     # =====================
@@ -139,7 +139,7 @@ def carteirinha(request, id):
     da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
     escrever(dn_d, 1335, 480, 10)
-    escrever(dn_m, 1385, 480, 10)
+    escrever(dn_m, 1380, 480, 10)
     escrever(dn_a, 1425, 480, 10)
 
     escrever(da_d, 1810, 480, 10)
