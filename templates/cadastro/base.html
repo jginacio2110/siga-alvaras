@@ -5,6 +5,37 @@
 <title>GSVG</title>
 
 <style>
+
+input[type="time"] {
+    background-color: white;
+    color: #0d1b2a;
+    border: 1px solid #cfcbb8;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+input[type="time"]:focus {
+    border-color: #c7aa38;
+    box-shadow: 0 0 0 2px rgba(199,170,56,.2);
+}
+
+/* Ícone do relógio (remove azul padrão) */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(25%) sepia(10%) saturate(500%) hue-rotate(20deg);
+    cursor: pointer;
+}
+
+option {
+    background: white;
+    color: #0d1b2a;
+}
+
+option:checked,
+option:hover {
+    background: #f5f1dc;
+    color: #0d1b2a;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;

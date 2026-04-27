@@ -2,6 +2,26 @@
 {% block content %}
 
 <style>
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-color: white;
+    color: #0d1b2a;
+
+    border: 1px solid #cfcbb8;
+    border-radius: 10px;
+
+    padding: 12px;
+}
+
+select:focus {
+    border-color: #c7aa38;
+    box-shadow: 0 0 0 2px rgba(199,170,56,.2);
+}
+
 .ba-card{
     background:white;
     border-radius:12px;
@@ -151,33 +171,36 @@ textarea{
     gap:15px;
 }
 
-.btn-salvar{
-    background:#0d1b2a;
-    color:white;
-    border:none;
-    border-radius:10px;
-    padding:16px;
-    font-weight:bold;
-    letter-spacing:1px;
-    cursor:pointer;
+.btn-salvar {
+    background: #0d1b2a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.btn-salvar:hover{
-    background:#152b42;
+.btn-salvar:hover {
+    background: #c7aa38;
+    color: #0d1b2a;
 }
 
-.btn-cancelar{
-    background:#e8e6dc;
-    color:#57564c;
-    text-align:center;
-    border-radius:10px;
-    padding:16px;
-    font-weight:bold;
-    text-decoration:none;
+.btn-cancelar {
+    background: #e8e6dc;
+    color: #57564c;
+    border-radius: 10px;
+    padding: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    transition: 0.2s;
 }
 
-.btn-cancelar:hover{
-    background:#d6d2bf;
+.btn-cancelar:hover {
+    background: #d6d2bf;
 }
 </style></style>
 
