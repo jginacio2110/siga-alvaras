@@ -109,27 +109,27 @@ def carteirinha(request, id):
     # =====================
     # FRENTE - MAIS À DIREITA
     # =====================
-    escrever(seguranca.nome_completo, 145, 385, 10)
+    escrever(seguranca.nome_completo, 145, 385, 12)
 
-    escrever(seguranca.empresa.razao_social, 145, 460, 10)
+    escrever(seguranca.empresa.razao_social, 145, 460, 12)
 
-    escrever("VIGIA", 145, 560, 10)
+    escrever("VIGIA", 145, 560, 12)
 
-    escrever(seguranca.rg, 145, 665, 9)
-    escrever(seguranca.registro, 440, 665, 9)
+    escrever(seguranca.rg, 145, 590, 10)
+    escrever(seguranca.registro, 440, 590, 10)
 
-    escrever(data_br(hoje), 145, 700, 9)
-    escrever(data_br(validade), 440, 700, 9)
+    escrever(data_br(hoje), 145, 820, 10)
+    escrever(data_br(validade), 440, 820, 10)
 
 
     # =====================
     # VERSO - PAI / MÃE AJUSTADOS
     # =====================
-    escrever(seguranca.pai, 1200, 255, 10)
+    escrever(seguranca.pai, 1200, 255, 12)
 
-    escrever(seguranca.mae, 1200, 325, 10)
+    escrever(seguranca.mae, 1200, 325, 12)
 
-    escrever(naturalidade, 1325, 395, 10)
+    escrever(naturalidade, 1325, 395, 12)
 
 
     # =====================
@@ -138,13 +138,13 @@ def carteirinha(request, id):
     dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
     da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
-    escrever(dn_d, 1320, 485, 9)
-    escrever(dn_m, 1380, 485, 9)
-    escrever(dn_a, 1440, 485, 9)
+    escrever(dn_d, 1345, 470, 10)
+    escrever(dn_m, 1390, 470, 10)
+    escrever(dn_a, 1425, 470, 10)
 
-    escrever(da_d, 1800, 485, 9)
-    escrever(da_m, 1845, 485, 9)
-    escrever(da_a, 1870, 485, 9)
+    escrever(da_d, 1815, 470, 10)
+    escrever(da_m, 1845, 470, 10)
+    escrever(da_a, 1905, 470, 10)
 
 
     # =====================
