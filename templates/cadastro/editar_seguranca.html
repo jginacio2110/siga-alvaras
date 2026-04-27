@@ -1,24 +1,6 @@
 {% extends 'cadastro/base.html' %}
 {% block content %}
 
-<style>
-.pagina{background:#f1f1f1;padding:40px}
-.box{background:white;padding:30px;border-radius:10px;max-width:700px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
-input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
-button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px}
-a{display:block;margin-top:15px;text-align:center;color:#0d1b2a;text-decoration:none}
-</style>
-
-<script>
-function mascaraCPF(campo){
-    let v = campo.value.replace(/\D/g,'');
-    v = v.replace(/(\d{3})(\d)/,'$1.$2');
-    v = v.replace(/(\d{3})(\d)/,'$1.$2');
-    v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
-    campo.value = v;
-}
-</script>
-
 <div class="pagina">
 <div class="box">
 
@@ -27,27 +9,51 @@ function mascaraCPF(campo){
 <form method="post">
 {% csrf_token %}
 
-<input type="text" name="cpf" maxlength="14" value="{{ seguranca.cpf }}" oninput="mascaraCPF(this)" required>
-<input type="text" name="nome_completo" value="{{ seguranca.nome_completo }}" required>
+<input type="text" name="nome_completo" value="{{ seguranca.nome_completo }}" placeholder="Nome completo" required>
 
-<select name="empresa_id" required>
-{% for empresa in empresas %}
-<option value="{{ empresa.id }}" {% if empresa.id == seguranca.empresa.id %}selected{% endif %}>
-{{ empresa.nome }} - {{ empresa.cnpj }}
+<input type="text" name="rg" value="{{ seguranca.rg }}" placeholder="RG">
+
+<input type="text" name="cpf" value="{{ seguranca.cpf }}" placeholder="CPF">
+
+<input type="text" name="registro" value="{{ seguranca.registro }}" placeholder="Registro">
+
+<input type="text" name="pai" value="{{ seguranca.pai }}" placeholder="Nome do pai">
+
+<input type="text" name="mae" value="{{ seguranca.mae }}" placeholder="Nome da mãe">
+
+<select name="naturalidade">
+<option value="">Naturalidade</option>
+{% for m in municipios %}
+<option value="{{ m.id }}" {% if seguranca.naturalidade and m.id == seguranca.naturalidade.id %}selected{% endif %}>
+{{ m.nome }}
 </option>
 {% endfor %}
 </select>
 
+<label>Data de nascimento</label>
+<input type="date" name="data_nascimento" value="{{ seguranca.data_nascimento|date:'Y-m-d' }}">
+
+<label>Empresa</label>
+<select name="empresa_id" required>
+{% for empresa in empresas %}
+<option value="{{ empresa.id }}" {% if empresa.id == seguranca.empresa.id %}selected{% endif %}>
+{{ empresa.razao_social }}
+</option>
+{% endfor %}
+</select>
+
+<label>Data de admissão</label>
+<input type="date" name="data_admissao" value="{{ seguranca.data_admissao|date:'Y-m-d' }}">
+
 <select name="situacao">
 <option value="Ativo" {% if seguranca.situacao == "Ativo" %}selected{% endif %}>Ativo</option>
 <option value="Inativo" {% if seguranca.situacao == "Inativo" %}selected{% endif %}>Inativo</option>
-<option value="Suspenso" {% if seguranca.situacao == "Suspenso" %}selected{% endif %}>Suspenso</option>
 </select>
 
 <button type="submit">Salvar Alterações</button>
 </form>
 
-<a href="/pesquisar/">Voltar para pesquisa</a>
+<a href="/pesquisar/">Voltar</a>
 
 </div>
 </div>

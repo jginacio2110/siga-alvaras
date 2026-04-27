@@ -57,6 +57,15 @@ def carteirinha(request, id):
     def data_br(data):
         return data.strftime('%d/%m/%Y') if data else ''
 
+    def texto_limitado(p, texto, x, y, largura_max, fonte="Helvetica-Bold", tamanho=8):
+        texto = texto or ''
+        p.setFont(fonte, tamanho)
+
+        while p.stringWidth(texto, fonte, tamanho) > largura_max and len(texto) > 3:
+            texto = texto[:-1]
+
+        p.drawString(x, y, texto)
+
     assinante = ''
     if dados:
         assinante = f"{dados.graduacao or ''} - {dados.nome_guerra or ''}".strip(' -')
@@ -69,83 +78,134 @@ def carteirinha(request, id):
 
     card_w = 125 * mm
     card_h = 78 * mm
-    y = altura - card_h - 25 * mm
-    x1 = 18 * mm
-    x2 = x1 + card_w + 10 * mm
 
-    def desenhar_borda(x, y):
-        p.setFillColor(colors.HexColor("#c7b56b"))
+    x1 = 18 * mm
+    y = altura - card_h - 25 * mm
+    x2 = x1 + card_w + 8 * mm
+
+    azul_fundo = colors.HexColor("#cfe1f7")
+    azul_linha = colors.HexColor("#2d68b2")
+    dourado = colors.HexColor("#c7aa45")
+    dourado_escuro = colors.HexColor("#7d6926")
+    preto = colors.black
+
+    def desenhar_base(x, y):
+        p.setFillColor(dourado)
         p.rect(x, y, card_w, card_h, fill=1, stroke=0)
 
-        p.setFillColor(colors.HexColor("#8fa8c8"))
-        p.rect(x + 5*mm, y + 5*mm, card_w - 10*mm, card_h - 10*mm, fill=1, stroke=0)
-
-        p.setStrokeColor(colors.black)
+        p.setStrokeColor(dourado_escuro)
         p.setLineWidth(1)
         p.rect(x, y, card_w, card_h, fill=0, stroke=1)
 
-        p.setFillColor(colors.HexColor("#6d5f2a"))
+        p.setFillColor(azul_fundo)
+        p.rect(x + 5*mm, y + 5*mm, card_w - 10*mm, card_h - 10*mm, fill=1, stroke=0)
 
-        for i in range(4, int(card_w/mm), 8):
-            p.circle(x + i*mm, y + card_h - 4*mm, 1.6*mm, fill=1)
-            p.circle(x + i*mm, y + 4*mm, 1.6*mm, fill=1)
+        p.setStrokeColor(azul_linha)
+        p.setLineWidth(1.2)
+        p.rect(x + 5*mm, y + 5*mm, card_w - 10*mm, card_h - 10*mm, fill=0, stroke=1)
 
-        for i in range(4, int(card_h/mm), 8):
-            p.circle(x + 4*mm, y + i*mm, 1.6*mm, fill=1)
-            p.circle(x + card_w - 4*mm, y + i*mm, 1.6*mm, fill=1)
+        p.setFillColor(dourado_escuro)
 
-    def texto(x, y, label, valor, tamanho=8):
-        p.setFillColor(colors.black)
-        p.setFont("Helvetica-Bold", 6)
-        p.drawString(x, y + 9, label)
-        p.setFont("Helvetica-Bold", tamanho)
-        p.drawString(x, y, valor or '')
+        for i in range(4, int(card_w / mm), 7):
+            p.circle(x + i*mm, y + card_h - 4*mm, 1.4*mm, fill=1, stroke=0)
+            p.circle(x + i*mm, y + 4*mm, 1.4*mm, fill=1, stroke=0)
 
+        for i in range(4, int(card_h / mm), 7):
+            p.circle(x + 4*mm, y + i*mm, 1.4*mm, fill=1, stroke=0)
+            p.circle(x + card_w - 4*mm, y + i*mm, 1.4*mm, fill=1, stroke=0)
+
+        p.setFillColor(colors.HexColor("#8aa7cc"))
+        p.setFont("Helvetica-Bold", 34)
+        p.setFillAlpha(0.18)
+        p.drawCentredString(x + card_w/2, y + card_h/2 - 8*mm, "GSVG")
+        p.setFillAlpha(1)
+
+    def caixa(x, y, w, h):
+        p.setStrokeColor(azul_linha)
+        p.setLineWidth(0.6)
+        p.rect(x, y, w, h, fill=0, stroke=1)
+
+    def label_valor(label, valor, x, y, w, h, tam=8):
+        caixa(x, y, w, h)
+        p.setFillColor(preto)
+        p.setFont("Helvetica-Bold", 7)
+        p.drawString(x + 2*mm, y + h - 4*mm, label)
+        texto_limitado(
+            p,
+            str(valor or '').upper(),
+            x + 2*mm,
+            y + 2.2*mm,
+            w - 4*mm,
+            "Helvetica-Bold",
+            tam
+        )
+
+    # =====================
     # FRENTE
-    desenhar_borda(x1, y)
+    # =====================
+    desenhar_base(x1, y)
 
-    p.setFont("Helvetica-Bold", 8)
-    p.drawCentredString(x1 + card_w/2, y + card_h - 12*mm, "ESTADO DO RIO GRANDE DO SUL")
-    p.drawCentredString(x1 + card_w/2, y + card_h - 16*mm, "SECRETARIA DA SEGURANÇA PÚBLICA")
-    p.drawCentredString(x1 + card_w/2, y + card_h - 20*mm, "BRIGADA MILITAR - COE")
-    p.drawCentredString(x1 + card_w/2, y + card_h - 24*mm, "GRUPAMENTO DE SUPERVISÃO DE VIGILÂNCIA E GUARDAS")
-
-    p.setFillColor(colors.lightgrey)
-    p.rect(x1 + card_w - 37*mm, y + 21*mm, 27*mm, 36*mm, fill=1, stroke=1)
-    p.setFillColor(colors.black)
-    p.setFont("Helvetica-Bold", 9)
-    p.drawCentredString(x1 + card_w - 23.5*mm, y + 38*mm, "SEM FOTO")
-
-    texto(x1 + 10*mm, y + 45*mm, "NOME", seguranca.nome_completo.upper(), 9)
-    texto(x1 + 10*mm, y + 34*mm, "ORGANIZAÇÃO", seguranca.empresa.razao_social.upper(), 8)
-
-    p.setFillColor(colors.red)
+    p.setFillColor(preto)
     p.setFont("Helvetica-Bold", 10)
-    p.drawString(x1 + 10*mm, y + 27*mm, "VIGIA")
+    p.drawCentredString(x1 + card_w/2, y + card_h - 13*mm, "ESTADO DO RIO GRANDE DO SUL")
+    p.drawCentredString(x1 + card_w/2, y + card_h - 18*mm, "SECRETARIA DA SEGURANÇA PÚBLICA")
+    p.drawCentredString(x1 + card_w/2, y + card_h - 23*mm, "BRIGADA MILITAR - COE")
 
-    texto(x1 + 10*mm, y + 18*mm, "RG nº", seguranca.rg, 8)
-    texto(x1 + 50*mm, y + 18*mm, "REGISTRO nº", seguranca.registro, 8)
+    p.setFont("Helvetica-Bold", 7.5)
+    p.drawCentredString(x1 + card_w/2, y + card_h - 28*mm, "GRUPAMENTO DE SUPERVISÃO DE VIGILÂNCIA E GUARDAS")
 
-    texto(x1 + 10*mm, y + 8*mm, "EMITIDA EM", data_br(hoje), 8)
-    texto(x1 + 50*mm, y + 8*mm, "VÁLIDO ATÉ", data_br(validade), 8)
+    label_valor("NOME", seguranca.nome_completo, x1 + 10*mm, y + 48*mm, 100*mm, 10*mm, 8)
+    label_valor("ORGANIZAÇÃO", seguranca.empresa.razao_social, x1 + 10*mm, y + 36*mm, 100*mm, 10*mm, 7)
+    label_valor("FUNÇÃO", "VIGIA", x1 + 10*mm, y + 24*mm, 75*mm, 10*mm, 9)
+
+    label_valor("RG nº", seguranca.rg, x1 + 10*mm, y + 13*mm, 34*mm, 10*mm, 7)
+    label_valor("REGISTRO nº", seguranca.registro, x1 + 47*mm, y + 13*mm, 38*mm, 10*mm, 7)
+
+    label_valor("EMITIDA EM", data_br(hoje), x1 + 10*mm, y + 2*mm, 34*mm, 10*mm, 7)
+    label_valor("VÁLIDO ATÉ", data_br(validade), x1 + 47*mm, y + 2*mm, 38*mm, 10*mm, 7)
+
+    caixa(x1 + 88*mm, y + 13*mm, 22*mm, 33*mm)
+    p.setFont("Helvetica-Bold", 10)
+    p.drawCentredString(x1 + 99*mm, y + 28*mm, "FOTO")
 
     p.setFont("Helvetica-Bold", 6)
-    p.drawCentredString(x1 + card_w/2, y + 3*mm, "VÁLIDA SOMENTE COM APRESENTAÇÃO DE DOCUMENTO DE IDENTIDADE")
+    p.drawCentredString(
+        x1 + card_w/2,
+        y + 8*mm,
+        "★  VÁLIDA SOMENTE COM APRESENTAÇÃO DE DOCUMENTO DE IDENTIDADE  ★"
+    )
 
+    # =====================
     # VERSO
-    desenhar_borda(x2, y)
+    # =====================
+    desenhar_base(x2, y)
 
-    texto(x2 + 10*mm, y + 57*mm, "FILIAÇÃO", "", 8)
-    texto(x2 + 10*mm, y + 49*mm, "PAI", (seguranca.pai or '').upper(), 8)
-    texto(x2 + 10*mm, y + 39*mm, "MÃE", (seguranca.mae or '').upper(), 8)
+    p.setFillColor(preto)
+    p.setFont("Helvetica-Bold", 10)
+    p.drawCentredString(x2 + card_w/2 + 15*mm, y + card_h - 15*mm, "PASTA/PROCESSO:")
 
-    naturalidade = seguranca.naturalidade.nome if seguranca.naturalidade else ''
-    texto(x2 + 10*mm, y + 29*mm, "NATURALIDADE", naturalidade.upper(), 8)
+    p.setFillColor(colors.red)
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(x2 + card_w - 25*mm, y + card_h - 15*mm, "1")
 
-    texto(x2 + 10*mm, y + 18*mm, "DATA DE NASCIMENTO", data_br(seguranca.data_nascimento), 8)
-    texto(x2 + 62*mm, y + 18*mm, "DATA DE ADMISSÃO NA EMPRESA", data_br(seguranca.data_admissao), 8)
+    p.setFillColor(preto)
+    p.setFont("Helvetica-Bold", 8)
+    p.drawString(x2 + 10*mm, y + card_h - 25*mm, "FILIAÇÃO:")
 
-    p.setFont("Helvetica-Bold", 9)
+    label_valor("PAI", seguranca.pai, x2 + 10*mm, y + 47*mm, 100*mm, 10*mm, 7)
+    label_valor("MÃE", seguranca.mae, x2 + 10*mm, y + 36*mm, 100*mm, 10*mm, 7)
+
+    naturalidade = ''
+    if seguranca.naturalidade:
+        naturalidade = f"{seguranca.naturalidade.nome} - {seguranca.naturalidade.estado}"
+
+    label_valor("NATURALIDADE", naturalidade, x2 + 10*mm, y + 25*mm, 100*mm, 10*mm, 7)
+
+    label_valor("DATA DE NASCIMENTO", data_br(seguranca.data_nascimento), x2 + 13*mm, y + 14*mm, 45*mm, 9*mm, 7)
+    label_valor("DATA DE ADMISSÃO NA EMPRESA", data_br(seguranca.data_admissao), x2 + 62*mm, y + 14*mm, 48*mm, 9*mm, 7)
+
+    p.setFillColor(preto)
+    p.setFont("Helvetica-Bold", 13)
     p.drawCentredString(x2 + card_w/2, y + 8*mm, assinante.upper())
 
     p.showPage()
@@ -450,12 +510,21 @@ def editar_empresa(request, id):
 def editar_seguranca(request, id):
     seguranca = Seguranca.objects.get(id=id)
     empresas = Empresa.objects.all().order_by('razao_social')
+    municipios = Municipio.objects.all().order_by('nome')
 
     if request.method == 'POST':
-        seguranca.cpf = request.POST['cpf']
-        seguranca.nome_completo = request.POST['nome_completo']
-        seguranca.empresa_id = request.POST['empresa_id']
-        seguranca.situacao = request.POST['situacao']
+        seguranca.cpf = request.POST.get('cpf')
+        seguranca.nome_completo = request.POST.get('nome_completo')
+        seguranca.rg = request.POST.get('rg')
+        seguranca.registro = request.POST.get('registro')
+        seguranca.pai = request.POST.get('pai')
+        seguranca.mae = request.POST.get('mae')
+        seguranca.naturalidade_id = request.POST.get('naturalidade') or None
+        seguranca.data_nascimento = request.POST.get('data_nascimento') or None
+        seguranca.data_admissao = request.POST.get('data_admissao') or None
+        seguranca.empresa_id = request.POST.get('empresa_id')
+        seguranca.situacao = request.POST.get('situacao')
+
         seguranca.save()
 
         LogAcao.objects.create(
@@ -468,7 +537,8 @@ def editar_seguranca(request, id):
 
     return render(request, 'cadastro/editar_seguranca.html', {
         'seguranca': seguranca,
-        'empresas': empresas
+        'empresas': empresas,
+        'municipios': municipios
     })
 
 
