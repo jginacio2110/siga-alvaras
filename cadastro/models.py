@@ -115,3 +115,22 @@ class LogAcao(models.Model):
 
     def __str__(self):
         return f"{self.usuario} - {self.acao} - {self.data}"
+    
+class DadosUsuario(models.Model):
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    graduacao = models.CharField(max_length=100, blank=True, null=True)
+    nome_guerra = models.CharField(max_length=100, blank=True, null=True)
+
+    nome_completo = models.CharField(max_length=150, blank=True, null=True)
+    cpf = models.CharField(max_length=14, blank=True, null=True)
+    data_nascimento = models.DateField(blank=True, null=True)
+
+    cidade_nascimento = models.CharField(max_length=100, blank=True, null=True)
+    uf_nascimento = models.CharField(max_length=2, blank=True, null=True)
+
+    pai = models.CharField(max_length=150, blank=True, null=True)
+    mae = models.CharField(max_length=150, blank=True, null=True)
+
+    def __str__(self):
+        return self.usuario.username

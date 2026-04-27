@@ -105,6 +105,7 @@ th,td{padding:10px;border:1px solid #ccc;text-align:left}
     {% if request.user.is_superuser %}
         <a href="/editar-seguranca/{{ s.id }}/">Editar</a> |
         <a href="/excluir-seguranca/{{ s.id }}/">Excluir</a>
+	<a href="/carteirinha/{{ s.id }}/" target="_blank">Imprimir</a>
     {% else %}
         {% for p in request.user.permissaousuario_set.all %}
             {% if p.liberado and p.pagina.rota == 'editar' %}

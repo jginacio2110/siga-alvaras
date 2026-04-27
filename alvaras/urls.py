@@ -1,17 +1,22 @@
 from django.contrib import admin
 from django.urls import path
 from cadastro.views import (
-    tela_login, painel, cadastrar, pesquisar,fiscalizacao,
+    tela_login, painel, cadastrar, pesquisar, fiscalizacao,
     permissoes, sem_permissao,
     editar_empresa, editar_seguranca,
     excluir_empresa, excluir_seguranca,
     usuarios, aplicar_nivel,
     logs, exportar_logs,
-    alternar_usuario, excluir_usuario, alterar_senha, registrar,pesquisar_empresa, pesquisar_seguranca
+    alternar_usuario, excluir_usuario,
+    alterar_senha, registrar,
+    pesquisar_empresa, pesquisar_seguranca,
+    meus_dados, carteirinha
 )
 
 urlpatterns = [
     path('fiscalizacao/', fiscalizacao),
+    path('meus-dados/', meus_dados),
+    path('carteirinha/<int:id>/', carteirinha),
     path('pesquisar-empresa/', pesquisar_empresa),
     path('pesquisar-seguranca/', pesquisar_seguranca),
     path('alterar-senha/', alterar_senha),

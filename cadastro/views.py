@@ -9,7 +9,58 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from .models import Empresa, Seguranca, Municipio, PaginaSistema, PermissaoUsuario, LogAcao
 from functools import wraps
+from .models import DadosUsuario
+from reportlab.pdfgen import canvas
 import csv
+
+@login_required
+def carteirinha(request, id):
+    seguranca = Seguranca.objects.get(id=id)
+    dados = DadosUsuario.objects.filter(usuario=request.user).first()
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="carteirinha.pdf"'
+
+    p = canvas.Canvas(response)
+
+    # TEXTO
+    p.drawString(100, 750, f"NOME: {seguranca.nome_completo}")
+    p.drawString(100, 730, f"EMPRESA: {seguranca.empresa.razao_social}")
+    p.drawString(100, 710, f"CPF: {seguranca.cpf}")
+    p.drawString(100, 690, f"RG: {seguranca.rg}")
+    p.drawString(100, 670, f"REGISTRO: {seguranca.registro}")
+
+    # 🔥 AQUI É O QUE VOCÊ PEDIU
+    if dados:
+        rodape = f"{dados.graduacao} - {dados.nome_guerra}"
+        p.drawString(100, 200, rodape)
+
+    p.showPage()
+    p.save()
+
+    return response
+
+
+@login_required
+def meus_dados(request):
+    dados, _ = DadosUsuario.objects.get_or_create(usuario=request.user)
+
+    if request.method == 'POST':
+        dados.graduacao = request.POST.get('graduacao')
+        dados.nome_guerra = request.POST.get('nome_guerra')
+        dados.nome_completo = request.POST.get('nome_completo')
+        dados.cpf = request.POST.get('cpf')
+        dados.data_nascimento = request.POST.get('data_nascimento')
+        dados.cidade_nascimento = request.POST.get('cidade_nascimento')
+        dados.uf_nascimento = request.POST.get('uf_nascimento')
+        dados.pai = request.POST.get('pai')
+        dados.mae = request.POST.get('mae')
+        dados.save()
+
+        return redirect('/meus-dados/')
+
+    return render(request, 'cadastro/meus_dados.html', {'dados': dados})
+
 
 def pesquisar_empresa(request):
     busca_empresa = request.GET.get('empresa', '')
