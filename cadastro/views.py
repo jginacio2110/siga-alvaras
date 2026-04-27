@@ -91,7 +91,7 @@ def carteirinha(request, id):
     p.drawImage(modelo, x0, y0, width=img_w, height=img_h)
 
     def pos(x, y):
-        px = x0 + (x / 2000) * img_w
+        px = x0 + (x / 2048) * img_w
         py = y0 + img_h - (y / 1000) * img_h
         return px, py
 
@@ -107,45 +107,57 @@ def carteirinha(request, id):
         p.drawCentredString(px, py, str(texto or '').upper())
 
    # =====================
-    # FRENTE
+    # FRENTE - AJUSTADO
     # =====================
-    escrever(seguranca.nome_completo, 140, 360, 9)
+    escrever(seguranca.nome_completo, 135, 395, 9)
 
-    escrever(seguranca.empresa.razao_social, 140, 440, 9)
+    escrever(seguranca.empresa.razao_social, 135, 475, 9)
 
-    escrever("VIGIA", 140, 520, 9)
+    escrever("VIGIA", 135, 555, 9)
 
-    escrever(seguranca.rg, 140, 600, 9)
-    escrever(seguranca.registro, 420, 600, 9)
+    escrever(seguranca.rg, 135, 640, 9)
+    escrever(seguranca.registro, 420, 640, 9)
 
-    escrever(data_br(hoje), 140, 680, 9)
-    escrever(data_br(validade), 420, 680, 9)
-
-
-    # =====================
-    # VERSO
-    # =====================
-    escrever(seguranca.pai, 1180, 260, 9)
-    escrever(seguranca.mae, 1180, 330, 9)
-    escrever(naturalidade, 1280, 400, 9)
+    escrever(data_br(hoje), 135, 720, 9)
+    escrever(data_br(validade), 420, 720, 9)
 
 
     # =====================
-    # DATAS (AJUSTADAS NA LINHA CORRETA)
+    # VERSO - AJUSTADO
     # =====================
-    escrever_centro(data_br(seguranca.data_nascimento), 1430, 470, 8)
-    escrever_centro(data_br(seguranca.data_admissao), 1850, 470, 8)
+    escrever(seguranca.pai, 1220, 260, 9)
+    escrever(seguranca.mae, 1220, 330, 9)
+    escrever(naturalidade, 1340, 400, 9)
+
+
+    # =====================
+    # DATAS COM NÚMEROS SEPARADOS
+    # =====================
+    dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
+    da_d, da_m, da_a = data_split(seguranca.data_admissao)
+
+    # nascimento
+    escrever(dn_d, 1370, 500, 9)
+    escrever(dn_m, 1425, 500, 9)
+    escrever(dn_a, 1490, 500, 9)
+
+    # admissão
+    escrever(da_d, 1800, 500, 9)
+    escrever(da_m, 1855, 500, 9)
+    escrever(da_a, 1920, 500, 9)
 
 
     # =====================
     # ASSINATURA
     # =====================
-    escrever_centro(assinante, 1500, 820, 12)
+    escrever_centro(assinante, 1535, 835, 12)
 
     p.showPage()
     p.save()
 
     return response
+
+
 
 @login_required
 def teste_grade_carteirinha(request):
