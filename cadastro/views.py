@@ -107,42 +107,41 @@ def carteirinha(request, id):
         p.drawCentredString(px, py, str(texto or '').upper())
 
     # =====================
-    # FRENTE - POSIÇÕES CORRIGIDAS
-    escrever(seguranca.nome_completo, 120, 398, 8)
-    escrever(seguranca.empresa.razao_social, 120, 488, 8)
-    escrever("VIGIA", 120, 574, 8)
+        # =====================
+    # FRENTE - AJUSTADA
+    # =====================
+    escrever(seguranca.nome_completo, 90, 412, 8)
+    escrever(seguranca.empresa.razao_social, 90, 502, 8)
+    escrever("VIGIA", 90, 585, 8)
 
-    escrever(seguranca.rg, 120, 670, 8)
-    escrever(seguranca.registro, 405, 670, 8)
+    escrever(seguranca.rg, 90, 675, 8)
+    escrever(seguranca.registro, 375, 675, 8)
 
-    escrever(data_br(hoje), 120, 760, 8)
-    escrever(data_br(validade), 405, 760, 8)
+    escrever(data_br(hoje), 90, 765, 8)
+    escrever(data_br(validade), 375, 765, 8)
 
     # =====================
-    # VERSO
+    # VERSO - AJUSTADO PARA SAIR NA FRENTE DOS RÓTULOS
     # =====================
-    escrever(seguranca.pai, 1130, 280, 8)
-    escrever(seguranca.mae, 1130, 365, 8)
-    escrever(naturalidade, 1130, 450, 8)
+    escrever(seguranca.pai, 1200, 275, 8)
+    escrever(seguranca.mae, 1200, 355, 8)
+    escrever(naturalidade, 1295, 435, 8)
 
-    # 👉 DATAS SEPARADAS (CORREÇÃO PRINCIPAL)
     dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
     da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
-    # nascimento - preenchendo nos espaços das barras
-    escrever(dn_d, 1362, 498, 8)
-    escrever(dn_m, 1418, 498, 8)
-    escrever(dn_a, 1478, 498, 8)
+    # DATA NASCIMENTO - dentro dos espaços / /
+    escrever(dn_d, 1385, 508, 8)
+    escrever(dn_m, 1445, 508, 8)
+    escrever(dn_a, 1505, 508, 8)
 
-    # admissão - preenchendo nos espaços das barras
-    escrever(da_d, 1795, 498, 8)
-    escrever(da_m, 1850, 498, 8)
-    escrever(da_a, 1910, 498, 8)
+    # DATA ADMISSÃO - dentro dos espaços / /
+    escrever(da_d, 1810, 508, 8)
+    escrever(da_m, 1870, 508, 8)
+    escrever(da_a, 1930, 508, 8)
 
-    # =====================
-    # ASSINATURA (AJUSTADA)
-    # =====================
-    escrever_centro(assinante, 1535, 875, 12)
+    # ASSINATURA
+    escrever_centro(assinante, 1535, 865, 12)
 
     p.showPage()
     p.save()
