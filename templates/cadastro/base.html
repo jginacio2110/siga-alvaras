@@ -56,7 +56,7 @@ body {
     font-weight: bold;
 }
 
-/* USUÁRIO NO CANTO DIREITO */
+/* USUÁRIO */
 .usuario-menu {
     position: relative;
 }
@@ -69,7 +69,7 @@ body {
     cursor: pointer;
 }
 
-/* BARRA DO MENU */
+/* MENU */
 .menu-bar {
     height: 50px;
     background: #57564c;
@@ -77,7 +77,6 @@ body {
     display: flex;
     align-items: center;
     padding: 0 35px;
-    box-sizing: border-box;
 }
 
 .menu {
@@ -86,16 +85,28 @@ body {
     height: 100%;
 }
 
+/* 🔥 CORRIGIDO - SEM “ZOOM” */
 .menu a {
     color: white;
     text-decoration: none;
-    padding: 17px 22px;
+    padding: 0 22px;
+    height: 50px;
+    display: flex;
+    align-items: center;
     font-weight: bold;
     font-size: 15px;
+    box-sizing: border-box;
+    transition: background-color 0.15s ease;
 }
 
 .menu a:hover {
-    background: #47463e;
+    background-color: #47463e;
+}
+
+/* GARANTE QUE NUNCA VAI DAR SCALE */
+.menu a,
+.menu a:hover {
+    transform: none !important;
 }
 
 .menu-item {
@@ -117,20 +128,22 @@ body {
     z-index: 999;
 }
 
+/* 🔥 CORRIGIDO - SEM VARIAÇÃO DE TAMANHO */
 .submenu a {
-    display: block;
+    display: flex;
+    align-items: center;
     color: #222;
-    padding: 12px 20px;
+    padding: 0 20px;
+    height: 42px;
     font-weight: normal;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 .submenu a:hover {
     background: #f2f2f2;
-    color: #222;
 }
 
-/* SUBMENU ABERTO POR CLIQUE */
 .menu-item.ativo .submenu {
     display: block;
 }
@@ -145,7 +158,6 @@ body {
     min-width: 190px;
     box-shadow: 0 3px 10px rgba(0,0,0,.25);
     border-radius: 4px;
-    z-index: 1000;
 }
 
 .dropdown a {
@@ -194,13 +206,7 @@ body {
     <div class="menu">
         <a href="/painel/">DASHBOARD</a>
 
-        <div class="menu-item">
-            <a href="#">CADASTRAR ▾</a>
-            <div class="submenu">
-                <a href="/cadastrar/">Empresa</a>
-                <a href="/cadastrar/">Segurança</a>
-            </div>
-        </div>
+        <a href="/cadastrar/">CADASTRAR</a>
 
         <div class="menu-item">
             <a href="#">PESQUISAR ▾</a>
@@ -210,6 +216,7 @@ body {
             </div>
         </div>
 
+	<a href="/fiscalizacao/">FISCALIZAÇÃO</a>
         <a href="/usuarios/">USUÁRIOS</a>
         <a href="/logs/">LOGS</a>
         <a href="/admin/">ADMIN</a>
@@ -229,56 +236,44 @@ document.addEventListener("DOMContentLoaded", function() {
     const menuItems = document.querySelectorAll('.menu-item');
 
     function fecharSubmenus() {
-        menuItems.forEach(function(item) {
-            item.classList.remove('ativo');
-        });
+        menuItems.forEach(item => item.classList.remove('ativo'));
     }
 
     function fecharUsuario() {
-        if (usuarioDropdown) {
-            usuarioDropdown.style.display = 'none';
-        }
+        if (usuarioDropdown) usuarioDropdown.style.display = 'none';
     }
 
-    menuItems.forEach(function(item) {
+    menuItems.forEach(item => {
         const link = item.querySelector('a');
 
         link.onclick = function(e) {
             e.preventDefault();
             e.stopPropagation();
 
-            const estavaAberto = item.classList.contains('ativo');
+            const aberto = item.classList.contains('ativo');
 
             fecharSubmenus();
             fecharUsuario();
 
-            if (!estavaAberto) {
-                item.classList.add('ativo');
-            }
+            if (!aberto) item.classList.add('ativo');
         };
 
         const submenu = item.querySelector('.submenu');
-
         if (submenu) {
-            submenu.onclick = function(e) {
-                e.stopPropagation();
-            };
+            submenu.onclick = e => e.stopPropagation();
         }
     });
 
     if (usuarioBtn && usuarioDropdown) {
         usuarioBtn.onclick = function(e) {
             e.stopPropagation();
-
             fecharSubmenus();
 
             usuarioDropdown.style.display =
                 usuarioDropdown.style.display === 'block' ? 'none' : 'block';
         };
 
-        usuarioDropdown.onclick = function(e) {
-            e.stopPropagation();
-        };
+        usuarioDropdown.onclick = e => e.stopPropagation();
     }
 
     document.addEventListener('click', function() {

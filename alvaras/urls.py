@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from cadastro.views import (
-    tela_login, painel, cadastrar, pesquisar,
+    tela_login, painel, cadastrar, pesquisar,fiscalizacao,
     permissoes, sem_permissao,
     editar_empresa, editar_seguranca,
     excluir_empresa, excluir_seguranca,
@@ -11,6 +11,7 @@ from cadastro.views import (
 )
 
 urlpatterns = [
+    path('fiscalizacao/', fiscalizacao),
     path('alterar-senha/', alterar_senha),
     path('registrar/', registrar),
     path('', tela_login),

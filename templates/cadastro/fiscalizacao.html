@@ -1,0 +1,208 @@
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
+<style>
+.area-fiscalizacao{
+    background:#f5f6fa;
+    min-height:100vh;
+    padding:25px;
+}
+
+.titulo-pagina{
+    font-size:22px;
+    font-weight:bold;
+    color:#1f2937;
+    border-left:5px solid #2563eb;
+    padding-left:12px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:35px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    margin-bottom:25px;
+}
+
+.consulta-titulo{
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    color:#374151;
+    margin-bottom:25px;
+}
+
+.busca-linha{
+    display:flex;
+    gap:10px;
+    max-width:700px;
+    margin:0 auto 25px auto;
+}
+
+.busca-linha input{
+    flex:1;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:15px;
+}
+
+.busca-linha button{
+    width:130px;
+    border:none;
+    background:#1d4ed8;
+    color:white;
+    font-weight:bold;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.acoes{
+    border-top:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-around;
+    padding-top:35px;
+}
+
+.acao{
+    text-align:center;
+    text-decoration:none;
+    color:#374151;
+    font-weight:bold;
+}
+
+.icone{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    margin:0 auto 10px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+}
+
+.ba{background:#f3e8ff;color:#7e22ce}
+.cop{background:#dbeafe;color:#2563eb}
+.tc{background:#ffedd5;color:#ea580c}
+
+.tabela-card{
+    background:white;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    overflow:hidden;
+}
+
+.tabela-titulo{
+    padding:18px;
+    font-weight:bold;
+    color:#374151;
+    border-bottom:1px solid #e5e7eb;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:15px;
+    text-align:left;
+    border-bottom:1px solid #eee;
+    color:#374151;
+}
+
+th{
+    color:#9ca3af;
+    font-size:14px;
+}
+
+.status{
+    padding:6px 10px;
+    border-radius:5px;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.finalizado{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.analise{
+    background:#fef3c7;
+    color:#92400e;
+}
+</style>
+
+<div class="area-fiscalizacao">
+
+    <div class="titulo-pagina">Central de Fiscalização</div>
+
+    <div class="card">
+        <div class="consulta-titulo">Consulta Rápida de Campo</div>
+
+        <form method="get" class="busca-linha">
+            <input type="text" name="busca" value="{{ busca }}" placeholder="Pesquisar por CPF, CNPJ, BA, COP ou TC...">
+            <button type="submit">BUSCAR</button>
+        </form>
+
+        <div class="acoes">
+            <a href="#" class="acao">
+                <div class="icone ba">⊞</div>
+                Adicionar BA
+            </a>
+
+            <a href="#" class="acao">
+                <div class="icone cop">▣</div>
+                Adicionar COP
+            </a>
+
+            <a href="#" class="acao">
+                <div class="icone tc">⚠</div>
+                Adicionar TC
+            </a>
+        </div>
+    </div>
+
+    <div class="tabela-card">
+        <div class="tabela-titulo">ÚLTIMAS FISCALIZAÇÕES</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data/Hora</th>
+                    <th>Local/Alvo</th>
+                    <th>Documento</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    {% for item in ultimas_fiscalizacoes %}
+    <tr>
+        <td>{{ item.data }}</td>
+        <td><strong>{{ item.local }}</strong> ({{ item.alvo }})</td>
+        <td>{{ item.documento }}</td>
+        <td>
+            {% if item.status == 'Finalizado' %}
+                <span class="status finalizado">FINALIZADO</span>
+            {% else %}
+                <span class="status analise">EM ANÁLISE</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4" style="text-align:center;color:#777;padding:25px;">
+            Nenhuma fiscalização cadastrada.
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

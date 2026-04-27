@@ -2,14 +2,53 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Empresa(models.Model):
-    cnpj = models.CharField(max_length=18, unique=True)
-    nome = models.CharField(max_length=200)
-    endereco = models.CharField(max_length=250)
-    situacao = models.CharField(max_length=30, default='Ativa')
+class Municipio(models.Model):
+    nome = models.CharField(max_length=100)
+    estado = models.CharField(max_length=2, default='RS')
+
+    class Meta:
+        ordering = ['nome']
+        verbose_name = 'Município'
+        verbose_name_plural = 'Municípios'
 
     def __str__(self):
-        return f"{self.nome} - {self.cnpj}"
+        return f"{self.nome} - {self.estado}"
+
+
+class Empresa(models.Model):
+    TIPO_PESSOA = [
+        ('fisica', 'Pessoa Física'),
+        ('juridica', 'Pessoa Jurídica'),
+    ]
+
+    tipo_pessoa = models.CharField(max_length=20, choices=TIPO_PESSOA, default='juridica')
+
+    razao_social = models.CharField(max_length=150)
+    cnpj = models.CharField(max_length=18, blank=True, null=True)
+
+    cep = models.CharField(max_length=9, blank=True, null=True)
+    endereco = models.CharField(max_length=150)
+    numero = models.CharField(max_length=20, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
+    bairro = models.CharField(max_length=100, blank=True, null=True)
+
+    municipio = models.ForeignKey(
+        Municipio,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    estado = models.CharField(max_length=2, default='RS')
+
+    proprietario = models.CharField(max_length=150, blank=True, null=True)
+    cpf = models.CharField(max_length=14, blank=True, null=True)
+    rg = models.CharField(max_length=20, blank=True, null=True)
+
+    situacao = models.CharField(max_length=20, default='Ativa')
+
+    def __str__(self):
+        return self.razao_social
 
 
 class Seguranca(models.Model):

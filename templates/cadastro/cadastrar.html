@@ -3,20 +3,60 @@
 
 <style>
 body{font-family:Arial;background:#f1f1f1}
-.box{background:white;padding:30px;border-radius:10px;max-width:750px;margin:40px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
-input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
-button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px}
+.box{background:white;padding:30px;border-radius:10px;max-width:850px;margin:40px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}
+button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px;cursor:pointer}
+.linha{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 </style>
 
 <script>
-function trocarTipo(){
+
+function trocarEstado(){
+    let estado = document.getElementById("estado").value;
+    let campoRS = document.getElementById("campo_municipio_rs");
+    let campoTexto = document.getElementById("campo_municipio_texto");
+    let municipioSelect = document.getElementById("municipio_select");
+    let municipioTexto = document.getElementById("municipio_texto");
+
+    if(estado === "RS"){
+        campoRS.style.display = "block";
+        campoTexto.style.display = "none";
+        municipioTexto.value = "";
+    } else {
+        campoRS.style.display = "none";
+        campoTexto.style.display = "block";
+        municipioSelect.value = "";
+        municipioTexto.value = "";
+    }
+}
+
+function trocarTipoCadastro(){
     let tipo = document.getElementById("tipo").value;
     document.getElementById("form_empresa").style.display = tipo === "empresa" ? "block" : "none";
     document.getElementById("form_seguranca").style.display = tipo === "seguranca" ? "block" : "none";
 }
 
+function trocarTipoPessoa(){
+    let tipoPessoa = document.getElementById("tipo_pessoa").value;
+    let documento = document.getElementById("documento_principal");
+
+    documento.value = "";
+
+    if(tipoPessoa === "fisica"){
+        documento.name = "cpf";
+        documento.placeholder = "CPF";
+        documento.maxLength = 14;
+        documento.oninput = function(){ mascaraCPF(this); };
+    } else {
+        documento.name = "cnpj";
+        documento.placeholder = "CNPJ";
+        documento.maxLength = 18;
+        documento.oninput = function(){ mascaraCNPJ(this); };
+    }
+}
+
 function mascaraCPF(campo){
-    let v = campo.value.replace(/\D/g,'');
+    let v = campo.value.replace(/\D/g,'').slice(0,11);
     v = v.replace(/(\d{3})(\d)/,'$1.$2');
     v = v.replace(/(\d{3})(\d)/,'$1.$2');
     v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
@@ -24,11 +64,17 @@ function mascaraCPF(campo){
 }
 
 function mascaraCNPJ(campo){
-    let v = campo.value.replace(/\D/g,'');
+    let v = campo.value.replace(/\D/g,'').slice(0,14);
     v = v.replace(/^(\d{2})(\d)/,'$1.$2');
     v = v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
     v = v.replace(/\.(\d{3})(\d)/,'.$1/$2');
     v = v.replace(/(\d{4})(\d)/,'$1-$2');
+    campo.value = v;
+}
+
+function mascaraCEP(campo){
+    let v = campo.value.replace(/\D/g,'').slice(0,8);
+    v = v.replace(/(\d{5})(\d)/,'$1-$2');
     campo.value = v;
 }
 </script>
@@ -36,7 +82,7 @@ function mascaraCNPJ(campo){
 <div class="box">
 <h2>Cadastrar</h2>
 
-<select id="tipo" onchange="trocarTipo()">
+<select id="tipo" onchange="trocarTipoCadastro()">
     <option value="empresa">Empresa</option>
     <option value="seguranca">Segurança</option>
 </select>
@@ -45,9 +91,58 @@ function mascaraCNPJ(campo){
 {% csrf_token %}
 <input type="hidden" name="tipo" value="empresa">
 
-<input type="text" name="cnpj" maxlength="18" placeholder="CNPJ da Empresa" oninput="mascaraCNPJ(this)" required>
-<input type="text" name="nome" placeholder="Nome da Empresa" required>
+<select name="tipo_pessoa" id="tipo_pessoa" onchange="trocarTipoPessoa()" required>
+    <option value="fisica">Pessoa Física</option>
+    <option value="juridica">Pessoa Jurídica</option>
+</select>
+
+<input type="text" name="razao_social" placeholder="Razão Social / Nome" required>
+
+<input type="text" id="documento_principal" name="cpf" maxlength="14" placeholder="CPF" oninput="mascaraCPF(this)" required>
+
+<div class="linha">
+    <input type="text" name="cep" maxlength="9" placeholder="CEP" oninput="mascaraCEP(this)">
+    <input type="text" name="numero" placeholder="Número">
+</div>
+
 <input type="text" name="endereco" placeholder="Endereço" required>
+
+<div class="linha">
+    <input type="text" name="bairro" placeholder="Bairro">
+    <input type="text" name="complemento" placeholder="Complemento">
+</div>
+
+<div class="linha">
+    <select name="estado" id="estado" required onchange="trocarEstado()">
+        <option value="RS" selected>Rio Grande do Sul</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="PR">Paraná</option>
+        <option value="SP">São Paulo</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="Outro">Outro Estado</option>
+    </select>
+
+    <div id="campo_municipio_rs">
+        <select name="municipio" id="municipio_select">
+            <option value="">Selecione o município</option>
+            {% for municipio in municipios %}
+                <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="campo_municipio_texto" style="display:none;">
+        <input type="text" name="municipio_texto" id="municipio_texto" placeholder="Digite o município">
+    </div>
+</div>
+
+<input type="text" name="proprietario" placeholder="Proprietário">
+
+<div class="linha">
+    <input type="text" name="cpf_proprietario" maxlength="14" placeholder="CPF do Proprietário" oninput="mascaraCPF(this)">
+    <input type="text" name="rg" placeholder="RG">
+</div>
 
 <button type="submit">Salvar Empresa</button>
 </form>
@@ -59,11 +154,11 @@ function mascaraCNPJ(campo){
 <input type="text" name="cpf" maxlength="14" placeholder="CPF do Segurança" oninput="mascaraCPF(this)" required>
 <input type="text" name="nome_completo" placeholder="Nome Completo" required>
 
-<input list="lista_empresas" name="empresa_busca" placeholder="Digite nome ou CNPJ da empresa" required>
+<input list="lista_empresas" name="empresa_busca" placeholder="Digite razão social ou CNPJ da empresa" required>
 
 <datalist id="lista_empresas">
     {% for empresa in empresas %}
-        <option value="{{ empresa.nome }} - {{ empresa.cnpj }}"></option>
+        <option value="{{ empresa.razao_social }} - {{ empresa.cnpj }}"></option>
     {% endfor %}
 </datalist>
 

@@ -169,13 +169,13 @@ body {
         <div class="erro">{{ erro }}</div>
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" autocomplete="on">
         {% csrf_token %}
 
         <div class="form-group">
             <label>Id Funcional</label>
             <div class="input-box">
-                <input type="text" name="username" placeholder="Id Funcional" required>
+                <input type="text" name="username" placeholder="Id Funcional" autocomplete="username" required>
                 <div class="input-icon">👤</div>
             </div>
         </div>
@@ -183,8 +183,19 @@ body {
         <div class="form-group">
             <label>Senha</label>
             <div class="input-box">
-                <input type="password" name="password" id="senha" placeholder="Senha" required>
-                <button type="button" class="eye-btn" onclick="mostrarSenha()">👁</button>
+                <input type="password" name="password" id="senha" placeholder="Senha" autocomplete="current-password" required>
+                <button 
+    		  type="button" 
+    		  class="eye-btn"
+    		  onmousedown="mostrarSenha()"
+    		  onmouseup="ocultarSenha()"
+    		  onmouseleave="ocultarSenha()"
+    		  ontouchstart="mostrarSenha()"
+    		  ontouchend="ocultarSenha()"
+		  ontouchcancel="ocultarSenha()"
+		>
+  		  👁
+		</button>
             </div>
         </div>
 
@@ -208,17 +219,15 @@ body {
 <script>
 function mostrarSenha() {
     const campo = document.getElementById("senha");
-    const botao = document.querySelector(".eye-btn");
+    campo.type = "text";
+}
 
-    if (campo.type === "password") {
-        campo.type = "text";
-        botao.innerHTML = "🙈";
-    } else {
-        campo.type = "password";
-        botao.innerHTML = "👁";
-    }
+function ocultarSenha() {
+    const campo = document.getElementById("senha");
+    campo.type = "password";
 }
 </script>
+
 
 </body>
 </html>

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from .models import Empresa, Seguranca, PaginaSistema, PermissaoUsuario, LogAcao
+from .models import Empresa, Seguranca, Municipio, PaginaSistema, PermissaoUsuario, LogAcao
 from functools import wraps
 import csv
 
@@ -89,22 +89,35 @@ def painel(request):
 @login_required
 @permissao_requerida('cadastrar')
 def cadastrar(request):
-    empresas = Empresa.objects.all().order_by('nome')
+    empresas = Empresa.objects.all().order_by('razao_social')
+    municipios = Municipio.objects.all().order_by('nome')
 
     if request.method == 'POST':
         tipo = request.POST.get('tipo')
 
         if tipo == 'empresa':
+            municipio_id = request.POST.get('municipio')
+
             empresa = Empresa.objects.create(
-                cnpj=request.POST['cnpj'],
-                nome=request.POST['nome'],
-                endereco=request.POST['endereco']
+                tipo_pessoa=request.POST.get('tipo_pessoa'),
+                cnpj=request.POST.get('cnpj'),
+                razao_social=request.POST.get('razao_social'),
+                endereco=request.POST.get('endereco'),
+                numero=request.POST.get('numero'),
+                bairro=request.POST.get('bairro'),
+                cep=request.POST.get('cep'),
+                complemento=request.POST.get('complemento'),
+                municipio_id=request.POST.get('municipio') if request.POST.get('estado') == 'RS' else None,
+                estado=request.POST.get('estado', 'RS'),
+                proprietario=request.POST.get('proprietario'),
+                cpf=request.POST.get('cpf'),
+                rg=request.POST.get('rg'),
             )
 
             LogAcao.objects.create(
                 usuario=request.user,
                 acao='Cadastrou empresa',
-                descricao=f'Empresa: {empresa.nome}'
+                descricao=f'Empresa: {empresa.razao_social}'
             )
 
             return redirect('/painel/')
@@ -128,7 +141,10 @@ def cadastrar(request):
 
             return redirect('/painel/')
 
-    return render(request, 'cadastro/cadastrar.html', {'empresas': empresas})
+    return render(request, 'cadastro/cadastrar.html', {
+        'empresas': empresas,
+        'municipios': municipios
+    })
 
 
 @login_required
@@ -137,13 +153,13 @@ def pesquisar(request):
     busca_empresa = request.GET.get('empresa', '')
     busca_cpf = request.GET.get('cpf', '')
 
-    empresas = Empresa.objects.all().order_by('nome')
+    empresas = Empresa.objects.all().order_by('razao_social')
     resultado_empresas = Empresa.objects.none()
     resultado_segurancas = Seguranca.objects.none()
 
     if busca_empresa:
         resultado_empresas = (
-            Empresa.objects.filter(nome__icontains=busca_empresa) |
+            Empresa.objects.filter(razao_social__icontains=busca_empresa)|
             Empresa.objects.filter(cnpj__icontains=busca_empresa)
         )
 
@@ -158,6 +174,17 @@ def pesquisar(request):
         'busca_cpf': busca_cpf,
     })
 
+@login_required
+@permissao_requerida('fiscalizacao')
+def fiscalizacao(request):
+    busca = request.GET.get('busca', '')
+
+    ultimas_fiscalizacoes = []
+
+    return render(request, 'cadastro/fiscalizacao.html', {
+        'busca': busca,
+        'ultimas_fiscalizacoes': ultimas_fiscalizacoes
+    })
 
 @login_required
 def permissoes(request):
@@ -212,7 +239,7 @@ def editar_empresa(request, id):
 
     if request.method == 'POST':
         empresa.cnpj = request.POST['cnpj']
-        empresa.nome = request.POST['nome']
+        empresa.razao_social = request.POST['razao_social']
         empresa.endereco = request.POST['endereco']
         empresa.situacao = request.POST['situacao']
         empresa.save()
@@ -220,7 +247,7 @@ def editar_empresa(request, id):
         LogAcao.objects.create(
             usuario=request.user,
             acao='Editou empresa',
-            descricao=f'Empresa: {empresa.nome}'
+            descricao=f'Empresa: {empresa.razao_social}'
         )
 
         return redirect('/pesquisar/')
@@ -232,7 +259,7 @@ def editar_empresa(request, id):
 @permissao_requerida('editar')
 def editar_seguranca(request, id):
     seguranca = Seguranca.objects.get(id=id)
-    empresas = Empresa.objects.all().order_by('nome')
+    empresas = Empresa.objects.all().order_by('razao_social')
 
     if request.method == 'POST':
         seguranca.cpf = request.POST['cpf']
@@ -261,7 +288,7 @@ def excluir_empresa(request, id):
     empresa = Empresa.objects.get(id=id)
 
     if request.method == 'POST':
-        nome_empresa = empresa.nome
+        nome_empresa = empresa.razao_social
 
         LogAcao.objects.create(
             usuario=request.user,
@@ -274,7 +301,7 @@ def excluir_empresa(request, id):
 
     return render(request, 'cadastro/confirmar_exclusao.html', {
         'tipo': 'Empresa',
-        'nome': empresa.nome
+        'nome': empresa.razao_social
     })
 
 
