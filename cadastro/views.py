@@ -39,6 +39,12 @@ def meus_dados(request):
         dados.mae = request.POST.get('mae')
         dados.save()
 
+        LogAcao.objects.create(
+            usuario=request.user,
+            acao='Atualizou meus dados',
+            descricao='Usuário atualizou seus dados pessoais'
+)
+
         return redirect('/meus-dados/')
 
     return render(request, 'cadastro/meus_dados.html', {'dados': dados})
@@ -155,6 +161,14 @@ def carteirinha(request, id):
 
     p.showPage()
     p.save()
+
+    LogAcao.objects.create(
+        usuario=request.user,
+        acao='Gerou carteirinha',
+        descricao=f'Carteirinha gerada para: {seguranca.nome_completo}'
+    )
+
+
 
     return response
 
@@ -642,25 +656,79 @@ def aplicar_nivel(request, usuario_id, nivel):
     usuario = User.objects.get(id=usuario_id)
 
     if nivel == 'admin':
-        rotas = ['painel', 'cadastrar', 'pesquisar', 'editar', 'excluir', 'usuarios', 'logs']
+        rotas = [
+            'painel',
+            'cadastrar',
+            'pesquisar',
+            'editar',
+            'excluir',
+            'usuarios',
+            'logs',
+            'fiscalizacao',
+            'ba',
+            'meus_dados',
+            'carteirinha',
+        ]
+
         usuario.is_superuser = True
         usuario.is_staff = True
         usuario.save()
 
     elif nivel == 'operador':
-        rotas = ['painel', 'cadastrar', 'pesquisar', 'editar']
+        rotas = [
+            'painel',
+            'cadastrar',
+            'pesquisar',
+            'editar',
+            'fiscalizacao',
+            'ba',
+            'meus_dados',
+            'carteirinha',
+        ]
+
         usuario.is_superuser = False
         usuario.is_staff = False
         usuario.save()
 
     elif nivel == 'consulta':
-        rotas = ['painel', 'pesquisar']
+        rotas = [
+            'painel',
+            'pesquisar',
+            'fiscalizacao',
+            'meus_dados',
+            'carteirinha',
+        ]
+
         usuario.is_superuser = False
         usuario.is_staff = False
         usuario.save()
 
     else:
         return redirect('/usuarios/')
+
+    PermissaoUsuario.objects.filter(usuario=usuario).delete()
+
+    for rota in rotas:
+        pagina, criado = PaginaSistema.objects.get_or_create(
+            rota=rota,
+            defaults={'nome': rota.replace('_', ' ').capitalize()}
+        )
+
+        PermissaoUsuario.objects.create(
+            usuario=usuario,
+            pagina=pagina,
+            liberado=True
+        )
+
+    LogAcao.objects.create(
+        usuario=request.user,
+        acao='Alterou nível de usuário',
+        descricao=f'Usuário: {usuario.username} | Nível: {nivel}'
+    )
+
+    return redirect('/usuarios/')
+
+    
 
     PermissaoUsuario.objects.filter(usuario=usuario).delete()
 
@@ -799,13 +867,13 @@ def registrar(request):
 
 
 @login_required
-@permissao_requerida('fiscalizacao')
+@permissao_requerida('ba')
 def adicionar_ba(request):
     municipios = Municipio.objects.all().order_by('nome')
     empresas = Empresa.objects.all().order_by('razao_social')
 
     if request.method == 'POST':
-        BoletimAtendimento.objects.create(
+        ba = BoletimAtendimento.objects.create(
             titulo=request.POST.get('titulo'),
             data_fato=request.POST.get('data_fato'),
             hora=request.POST.get('hora') or None,
@@ -816,6 +884,12 @@ def adicionar_ba(request):
             usuario=request.user
         )
 
+        LogAcao.objects.create(
+            usuario=request.user,
+            acao='Registrou BA',
+            descricao=f'BA registrado: {ba.titulo}'
+        )
+
         return redirect('/fiscalizacao/')
 
     return render(request, 'cadastro/adicionar_ba.html', {
@@ -823,9 +897,8 @@ def adicionar_ba(request):
         'empresas': empresas
     })
 
-
 @login_required
-@permissao_requerida('fiscalizacao')
+@permissao_requerida('ba')
 def buscar_vigilantes(request):
     termo = request.GET.get('q', '')
 
