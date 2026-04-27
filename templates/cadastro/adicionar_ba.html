@@ -7,14 +7,15 @@
     border-radius:12px;
     max-width:1050px;
     margin:auto;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    box-shadow:0 2px 8px rgba(0,0,0,.10);
     overflow:hidden;
 }
 
 .ba-topo{
-    background:#111827;
+    background:#57564c;
     color:white;
     padding:25px;
+    border-bottom:5px solid #c7aa38;
 }
 
 .ba-topo h2{
@@ -26,7 +27,7 @@
     font-size:11px;
     letter-spacing:3px;
     font-weight:bold;
-    color:#cbd5e1;
+    color:#e8dfb5;
 }
 
 .ba-corpo{
@@ -36,11 +37,20 @@
 .secao{
     font-size:12px;
     font-weight:bold;
-    color:#2563eb;
+    color:#57564c;
     letter-spacing:3px;
     margin:25px 0 15px;
-    border-bottom:1px solid #e5e7eb;
+    border-bottom:1px solid #d6d2bf;
     padding-bottom:10px;
+}
+
+label{
+    display:block;
+    font-size:11px;
+    font-weight:bold;
+    color:#6b6758;
+    letter-spacing:1px;
+    margin-bottom:8px;
 }
 
 .grid-2{
@@ -61,22 +71,22 @@
     gap:25px;
 }
 
-label{
-    display:block;
-    font-size:11px;
-    font-weight:bold;
-    color:#94a3b8;
-    letter-spacing:1px;
-    margin-bottom:8px;
-}
-
 input, select, textarea{
     width:100%;
     padding:14px;
-    border:1px solid #dbe3ef;
-    border-radius:12px;
+    border:1px solid #cfcbb8;
+    border-radius:10px;
     font-size:14px;
     box-sizing:border-box;
+    background:white;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+    border-color:#c7aa38;
+    box-shadow:0 0 0 2px rgba(199,170,56,.20);
 }
 
 textarea{
@@ -94,7 +104,7 @@ textarea{
     left:0;
     right:0;
     background:white;
-    border:1px solid #dbe3ef;
+    border:1px solid #cfcbb8;
     border-radius:10px;
     box-shadow:0 6px 15px rgba(0,0,0,.15);
     z-index:999;
@@ -109,25 +119,26 @@ textarea{
 }
 
 .item-vigilante:hover{
-    background:#eef4ff;
+    background:#f5f1dc;
 }
 
 .item-vigilante strong{
     display:block;
-    color:#111827;
+    color:#0d1b2a;
 }
 
 .item-vigilante span{
     font-size:12px;
-    color:#64748b;
+    color:#57564c;
 }
 
 .aviso{
     margin-top:20px;
-    background:#eaf3ff;
-    color:#1d4ed8;
+    background:#f5f1dc;
+    color:#57564c;
+    border:1px solid #d6c275;
     padding:14px;
-    border-radius:12px;
+    border-radius:10px;
     font-size:11px;
     font-weight:bold;
     text-align:center;
@@ -141,26 +152,34 @@ textarea{
 }
 
 .btn-salvar{
-    background:#111827;
+    background:#0d1b2a;
     color:white;
     border:none;
-    border-radius:12px;
+    border-radius:10px;
     padding:16px;
     font-weight:bold;
     letter-spacing:1px;
     cursor:pointer;
 }
 
+.btn-salvar:hover{
+    background:#152b42;
+}
+
 .btn-cancelar{
-    background:#f1f5f9;
-    color:#475569;
+    background:#e8e6dc;
+    color:#57564c;
     text-align:center;
-    border-radius:12px;
+    border-radius:10px;
     padding:16px;
     font-weight:bold;
     text-decoration:none;
 }
-</style>
+
+.btn-cancelar:hover{
+    background:#d6d2bf;
+}
+</style></style>
 
 <div class="ba-card">
 
