@@ -91,7 +91,7 @@ def carteirinha(request, id):
     p.drawImage(modelo, x0, y0, width=img_w, height=img_h)
 
     def pos(x, y):
-        px = x0 + (x / 2048) * img_w
+        px = x0 + (x / 2000) * img_w
         py = y0 + img_h - (y / 1000) * img_h
         return px, py
 
@@ -106,58 +106,41 @@ def carteirinha(request, id):
         px, py = pos(x, y)
         p.drawCentredString(px, py, str(texto or '').upper())
 
+   # =====================
+    # FRENTE
     # =====================
-    # FRENTE (COORDENADAS REAIS)
-    # =====================
-    escrever(seguranca.nome_completo, 120, 370, 9)
+    escrever(seguranca.nome_completo, 140, 360, 9)
 
-    escrever(seguranca.empresa.razao_social, 120, 445, 9)
+    escrever(seguranca.empresa.razao_social, 140, 440, 9)
 
-    escrever("VIGIA", 120, 525, 9)
+    escrever("VIGIA", 140, 520, 9)
 
-    escrever(seguranca.rg, 120, 610, 9)
-    escrever(seguranca.registro, 400, 610, 9)
+    escrever(seguranca.rg, 140, 600, 9)
+    escrever(seguranca.registro, 420, 600, 9)
 
-    escrever(data_br(hoje), 120, 690, 9)
-    escrever(data_br(validade), 400, 690, 9)
+    escrever(data_br(hoje), 140, 680, 9)
+    escrever(data_br(validade), 420, 680, 9)
 
-    # =====================
-    # VERSO (ALINHADO COM OS RÓTULOS)
-    # =====================
-    # PAI
-    escrever(seguranca.pai, 1220, 260, 9)
-
-    # MÃE
-    escrever(seguranca.mae, 1220, 330, 9)
-
-    # NATURALIDADE
-    escrever(naturalidade, 1340, 400, 9)
 
     # =====================
-    # DATAS (EM CIMA DOS / /)
+    # VERSO
     # =====================
-    dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
-    da_d, da_m, da_a = data_split(seguranca.data_admissao)
+    escrever(seguranca.pai, 1180, 260, 9)
+    escrever(seguranca.mae, 1180, 330, 9)
+    escrever(naturalidade, 1280, 400, 9)
 
-    # nascimento
-    escrever(dn_d, 1365, 475, 9)
-    escrever(dn_m, 1420, 475, 9)
-    escrever(dn_a, 1480, 475, 9)
-
-    # admissão
-    escrever(da_d, 1760, 475, 9)
-    escrever(da_m, 1815, 475, 9)
-    escrever(da_a, 1875, 475, 9)
 
     # =====================
-    # ASSINATURA (SUBIU E CENTRALIZOU)
+    # DATAS (AJUSTADAS NA LINHA CORRETA)
     # =====================
-    escrever_centro(assinante, 1535, 835, 13)
+    escrever_centro(data_br(seguranca.data_nascimento), 1430, 470, 8)
+    escrever_centro(data_br(seguranca.data_admissao), 1850, 470, 8)
 
-    p.showPage()
-    p.save()
 
-    return response
+    # =====================
+    # ASSINATURA
+    # =====================
+    escrever_centro(assinante, 1500, 820, 12)
 
 @login_required
 def teste_grade_carteirinha(request):
