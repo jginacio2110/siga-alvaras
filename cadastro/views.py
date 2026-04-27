@@ -49,6 +49,7 @@ def carteirinha(request, id):
     dados = DadosUsuario.objects.filter(usuario=request.user).first()
 
     hoje = date.today()
+
     try:
         validade = hoje.replace(year=hoje.year + 2)
     except ValueError:
@@ -56,6 +57,14 @@ def carteirinha(request, id):
 
     def data_br(data):
         return data.strftime('%d/%m/%Y') if data else ''
+
+    def data_split(data):
+        if not data:
+            return ('', '', '')
+        d = data.strftime('%d')
+        m = data.strftime('%m')
+        a = data.strftime('%Y')
+        return d, m, a
 
     naturalidade = ''
     if seguranca.naturalidade:
@@ -86,35 +95,55 @@ def carteirinha(request, id):
         py = y0 + img_h - (y / 1000) * img_h
         return px, py
 
-    def escrever(texto, x, y, tamanho=8):
+    def escrever(texto, x, y, tamanho=7):
         p.setFillColor(colors.black)
         p.setFont("Helvetica-Bold", tamanho)
         p.drawString(*pos(x, y), str(texto or '').upper())
 
+    def escrever_centro(texto, x, y, tamanho=10):
+        p.setFillColor(colors.black)
+        p.setFont("Helvetica-Bold", tamanho)
+        px, py = pos(x, y)
+        p.drawCentredString(px, py, str(texto or '').upper())
+
+    # =====================
     # FRENTE
-    escrever(seguranca.nome_completo, 135, 385, 8)
-    escrever(seguranca.empresa.razao_social, 135, 480, 7)
-    escrever("VIGIA", 135, 570, 8)
+    # =====================
+    escrever(seguranca.nome_completo, 150, 420, 7)
+    escrever(seguranca.empresa.razao_social, 150, 505, 7)
+    escrever("VIGIA", 150, 585, 8)
 
-    escrever(seguranca.rg, 135, 665, 7)
-    escrever(seguranca.registro, 425, 665, 7)
+    escrever(seguranca.rg, 150, 670, 7)
+    escrever(seguranca.registro, 430, 670, 7)
 
-    escrever(data_br(hoje), 135, 765, 7)
-    escrever(data_br(validade), 425, 765, 7)
+    escrever(data_br(hoje), 150, 760, 7)
+    escrever(data_br(validade), 430, 760, 7)
 
+    # =====================
     # VERSO
+    # =====================
     escrever(seguranca.pai, 1140, 270, 7)
     escrever(seguranca.mae, 1140, 350, 7)
-    escrever(naturalidade, 1140, 435, 7)
+    escrever(naturalidade, 1140, 430, 7)
 
-    escrever(data_br(seguranca.data_nascimento), 1365, 515, 7)
-    escrever(data_br(seguranca.data_admissao), 1810, 515, 7)
+    # 👉 DATAS SEPARADAS (CORREÇÃO PRINCIPAL)
+    dn_d, dn_m, dn_a = data_split(seguranca.data_nascimento)
+    da_d, da_m, da_a = data_split(seguranca.data_admissao)
 
-    # ASSINATURA / USUÁRIO LOGADO
-    p.setFillColor(colors.black)
-    p.setFont("Helvetica-Bold", 12)
-    px, py = pos(1390, 910)
-    p.drawCentredString(px, py, assinante.upper())
+    # nascimento
+    escrever(dn_d, 1360, 515, 7)
+    escrever(dn_m, 1415, 515, 7)
+    escrever(dn_a, 1475, 515, 7)
+
+    # admissão
+    escrever(da_d, 1755, 515, 7)
+    escrever(da_m, 1810, 515, 7)
+    escrever(da_a, 1870, 515, 7)
+
+    # =====================
+    # ASSINATURA (AJUSTADA)
+    # =====================
+    escrever_centro(assinante, 1450, 890, 11)
 
     p.showPage()
     p.save()
