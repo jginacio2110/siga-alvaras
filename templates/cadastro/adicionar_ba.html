@@ -1,0 +1,93 @@
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
+<style>
+.form-card{
+    background:white;
+    border-radius:12px;
+    padding:30px;
+    max-width:900px;
+    margin:auto;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.titulo{
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+input, select, textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+}
+
+textarea{
+    height:120px;
+}
+
+.botao{
+    margin-top:20px;
+    width:100%;
+    padding:15px;
+    background:#111827;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+}
+</style>
+
+<div class="form-card">
+    <div class="titulo">Boletim de Atendimento (BA)</div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input type="text" name="titulo" placeholder="Título da ocorrência" required>
+
+        <div class="grid">
+            <input type="date" name="data_fato" required>
+            <input type="time" name="hora">
+        </div>
+
+        <div class="grid">
+            <select name="municipio" required>
+                <option value="">Município</option>
+                {% for m in municipios %}
+                    <option value="{{ m.id }}">{{ m.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="empresa">
+                <option value="">Empresa</option>
+                {% for e in empresas %}
+                    <option value="{{ e.id }}">{{ e.razao_social }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <select name="vigilante">
+            <option value="">Vigilante (CPF ou nome)</option>
+            {% for s in segurancas %}
+                <option value="{{ s.id }}">
+                    {{ s.nome_completo }} - {{ s.cpf }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <textarea name="historico" placeholder="Descreva a ocorrência"></textarea>
+
+        <button class="botao">FINALIZAR REGISTRO BA</button>
+    </form>
+</div>
+
+{% endblock %}

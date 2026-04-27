@@ -10,11 +10,12 @@ from cadastro.views import (
     alternar_usuario, excluir_usuario,
     alterar_senha, registrar,
     pesquisar_empresa, pesquisar_seguranca,
-    meus_dados, carteirinha, teste_grade_carteirinha
+    meus_dados, carteirinha, teste_grade_carteirinha, adicionar_ba
 )
 
 urlpatterns = [
     path('fiscalizacao/', fiscalizacao),
+    path('fiscalizacao/ba/', adicionar_ba),
     path('teste-grade-carteirinha/', teste_grade_carteirinha),
     path('meus-dados/', meus_dados),
     path('carteirinha/<int:id>/', carteirinha),

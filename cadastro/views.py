@@ -19,7 +19,8 @@ from reportlab.lib.units import mm
 
 from .models import (
     Empresa, Seguranca, Municipio, PaginaSistema,
-    PermissaoUsuario, LogAcao, DadosUsuario
+    PermissaoUsuario, LogAcao, DadosUsuario,
+    BoletimAtendimento
 )
 
 @login_required
@@ -795,3 +796,31 @@ def alterar_senha(request):
 
 def registrar(request):
     return render(request, 'cadastro/registrar.html')
+
+
+@login_required
+@permissao_requerida('fiscalizacao')
+def adicionar_ba(request):
+    municipios = Municipio.objects.all().order_by('nome')
+    empresas = Empresa.objects.all().order_by('razao_social')
+    segurancas = Seguranca.objects.all().order_by('nome_completo')
+
+    if request.method == 'POST':
+        BoletimAtendimento.objects.create(
+            titulo=request.POST.get('titulo'),
+            data_fato=request.POST.get('data_fato'),
+            hora=request.POST.get('hora') or None,
+            municipio_id=request.POST.get('municipio'),
+            empresa_id=request.POST.get('empresa') or None,
+            vigilante_id=request.POST.get('vigilante') or None,
+            historico=request.POST.get('historico'),
+            usuario=request.user
+        )
+
+        return redirect('/fiscalizacao/')
+
+    return render(request, 'cadastro/adicionar_ba.html', {
+        'municipios': municipios,
+        'empresas': empresas,
+        'segurancas': segurancas
+    })

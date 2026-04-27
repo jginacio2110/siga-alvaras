@@ -134,3 +134,18 @@ class DadosUsuario(models.Model):
 
     def __str__(self):
         return self.usuario.username
+    
+    class BoletimAtendimento(models.Model):
+        titulo = models.CharField(max_length=200)
+
+        data_fato = models.DateField()
+        hora = models.TimeField(blank=True, null=True)
+
+        municipio = models.ForeignKey(Municipio, on_delete=models.SET_NULL, null=True)
+        empresa = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True)
+        vigilante = models.ForeignKey(Seguranca, on_delete=models.SET_NULL, null=True, blank=True)
+
+        historico = models.TextField()
+
+        usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+        data_criacao = models.DateTimeField(auto_now_add=True)
