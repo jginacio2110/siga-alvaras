@@ -493,23 +493,38 @@ def sem_permissao(request):
 @permissao_requerida('editar')
 def editar_empresa(request, id):
     empresa = Empresa.objects.get(id=id)
+    municipios = Municipio.objects.all().order_by('nome')
 
     if request.method == 'POST':
-        empresa.cnpj = request.POST['cnpj']
-        empresa.razao_social = request.POST['razao_social']
-        empresa.endereco = request.POST['endereco']
-        empresa.situacao = request.POST['situacao']
+        empresa.tipo_pessoa = request.POST.get('tipo_pessoa')
+        empresa.razao_social = request.POST.get('razao_social')
+        empresa.cnpj = request.POST.get('cnpj') or None
+        empresa.cep = request.POST.get('cep') or None
+        empresa.numero = request.POST.get('numero') or None
+        empresa.endereco = request.POST.get('endereco')
+        empresa.bairro = request.POST.get('bairro') or None
+        empresa.complemento = request.POST.get('complemento') or None
+        empresa.estado = request.POST.get('estado', 'RS')
+        empresa.municipio_id = request.POST.get('municipio') or None
+        empresa.proprietario = request.POST.get('proprietario') or None
+        empresa.cpf = request.POST.get('cpf') or None
+        empresa.rg = request.POST.get('rg') or None
+        empresa.situacao = request.POST.get('situacao')
+
         empresa.save()
 
         LogAcao.objects.create(
             usuario=request.user,
             acao='Editou empresa',
-            descricao=f'Empresa: {empresa.razao_social}'
+            descricao=f'Empresa editada: {empresa.razao_social}'
         )
 
-        return redirect('/pesquisar/')
+        return redirect('/pesquisar-empresa/')
 
-    return render(request, 'cadastro/editar_empresa.html', {'empresa': empresa})
+    return render(request, 'cadastro/editar_empresa.html', {
+        'empresa': empresa,
+        'municipios': municipios
+    })
 
 
 @login_required

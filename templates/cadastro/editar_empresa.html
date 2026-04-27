@@ -3,9 +3,10 @@
 
 <style>
 .pagina{background:#f1f1f1;padding:40px}
-.box{background:white;padding:30px;border-radius:10px;max-width:700px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
-input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px}
-button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px}
+.box{background:white;padding:30px;border-radius:10px;max-width:900px;margin:auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+input,select{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}
+.linha{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{margin-top:15px;padding:12px;width:100%;background:#0d1b2a;color:white;border:none;border-radius:5px;font-weight:bold}
 a{display:block;margin-top:15px;text-align:center;color:#0d1b2a;text-decoration:none}
 </style>
 
@@ -17,20 +18,58 @@ a{display:block;margin-top:15px;text-align:center;color:#0d1b2a;text-decoration:
 <form method="post">
 {% csrf_token %}
 
-<input type="text" name="cnpj" maxlength="18" value="{{ empresa.cnpj }}" placeholder="CNPJ" required>
-<input type="text" name="nome" value="{{ empresa.nome }}" placeholder="Nome da Empresa" required>
+<select name="tipo_pessoa" required>
+    <option value="fisica" {% if empresa.tipo_pessoa == "fisica" %}selected{% endif %}>Pessoa Física</option>
+    <option value="juridica" {% if empresa.tipo_pessoa == "juridica" %}selected{% endif %}>Pessoa Jurídica</option>
+</select>
+
+<input type="text" name="razao_social" value="{{ empresa.razao_social }}" placeholder="Razão Social / Nome" required>
+
+<input type="text" name="cnpj" value="{{ empresa.cnpj|default:'' }}" placeholder="CPF/CNPJ">
+
+<div class="linha">
+    <input type="text" name="cep" value="{{ empresa.cep|default:'' }}" placeholder="CEP">
+    <input type="text" name="numero" value="{{ empresa.numero|default:'' }}" placeholder="Número">
+</div>
+
 <input type="text" name="endereco" value="{{ empresa.endereco }}" placeholder="Endereço" required>
 
+<div class="linha">
+    <input type="text" name="bairro" value="{{ empresa.bairro|default:'' }}" placeholder="Bairro">
+    <input type="text" name="complemento" value="{{ empresa.complemento|default:'' }}" placeholder="Complemento">
+</div>
+
+<div class="linha">
+    <select name="estado">
+        <option value="RS" {% if empresa.estado == "RS" %}selected{% endif %}>Rio Grande do Sul</option>
+    </select>
+
+    <select name="municipio">
+        <option value="">Selecione o município</option>
+        {% for m in municipios %}
+            <option value="{{ m.id }}" {% if empresa.municipio and empresa.municipio.id == m.id %}selected{% endif %}>
+                {{ m.nome }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<input type="text" name="proprietario" value="{{ empresa.proprietario|default:'' }}" placeholder="Proprietário">
+
+<div class="linha">
+    <input type="text" name="cpf" value="{{ empresa.cpf|default:'' }}" placeholder="CPF do Proprietário">
+    <input type="text" name="rg" value="{{ empresa.rg|default:'' }}" placeholder="RG">
+</div>
+
 <select name="situacao">
-<option value="Ativa" {% if empresa.situacao == "Ativa" %}selected{% endif %}>Ativa</option>
-<option value="Inativa" {% if empresa.situacao == "Inativa" %}selected{% endif %}>Inativa</option>
-<option value="Suspensa" {% if empresa.situacao == "Suspensa" %}selected{% endif %}>Suspensa</option>
+    <option value="Ativa" {% if empresa.situacao == "Ativa" %}selected{% endif %}>Ativa</option>
+    <option value="Inativa" {% if empresa.situacao == "Inativa" %}selected{% endif %}>Inativa</option>
 </select>
 
 <button type="submit">Salvar Alterações</button>
 </form>
 
-<a href="/pesquisar/">Voltar para pesquisa</a>
+<a href="/pesquisar-empresa/">Voltar para pesquisa</a>
 
 </div>
 </div>
