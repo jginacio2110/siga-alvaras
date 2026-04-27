@@ -11,6 +11,12 @@ label{display:block;margin-top:12px;font-weight:bold;color:#333}
 </style>
 
 <script>
+function trocarTipoCadastro(){
+    let tipo = document.getElementById("tipo").value;
+    document.getElementById("form_empresa").style.display = tipo === "empresa" ? "block" : "none";
+    document.getElementById("form_seguranca").style.display = tipo === "seguranca" ? "block" : "none";
+}
+
 function trocarEstadoEmpresa(){
     let estado = document.getElementById("estado_empresa").value;
     let campoRS = document.getElementById("campo_municipio_rs_empresa");
@@ -53,12 +59,6 @@ function trocarEstadoSeguranca(){
         naturalidadeSelect.value = "";
         naturalidadeTexto.required = true;
     }
-}
-
-function trocarTipoCadastro(){
-    let tipo = document.getElementById("tipo").value;
-    document.getElementById("form_empresa").style.display = tipo === "empresa" ? "block" : "none";
-    document.getElementById("form_seguranca").style.display = tipo === "seguranca" ? "block" : "none";
 }
 
 function trocarTipoPessoa(){
@@ -104,8 +104,10 @@ function mascaraCEP(campo){
 }
 
 document.addEventListener("DOMContentLoaded", function(){
+    trocarTipoCadastro();
     trocarEstadoEmpresa();
     trocarEstadoSeguranca();
+    trocarTipoPessoa();
 });
 </script>
 

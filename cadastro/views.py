@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -133,8 +134,6 @@ def cadastrar(request):
         tipo = request.POST.get('tipo')
 
         if tipo == 'empresa':
-            municipio_id = request.POST.get('municipio')
-
             empresa = Empresa.objects.create(
                 tipo_pessoa=request.POST.get('tipo_pessoa'),
                 cnpj=request.POST.get('cnpj'),
@@ -160,9 +159,14 @@ def cadastrar(request):
             return redirect('/painel/')
 
         if tipo == 'seguranca':
-            empresa_busca = request.POST['empresa_busca']
-            cnpj = empresa_busca.split(' - ')[-1]
-            empresa = Empresa.objects.get(cnpj=cnpj)
+            empresa_busca = request.POST.get('empresa_busca', '')
+            cnpj = empresa_busca.split(' - ')[-1].strip()
+
+            empresa = Empresa.objects.filter(cnpj=cnpj).first()
+
+            if not empresa:
+                messages.error(request, "Empresa não encontrada. Verifique o nome ou CNPJ.")
+                return redirect('/cadastrar/')
 
             seguranca = Seguranca.objects.create(
                 cpf=request.POST.get('cpf'),
