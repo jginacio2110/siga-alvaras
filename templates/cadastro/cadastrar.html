@@ -153,7 +153,33 @@ function mascaraCEP(campo){
 <input type="hidden" name="tipo" value="seguranca">
 
 <input type="text" name="cpf" maxlength="14" placeholder="CPF do Segurança" oninput="mascaraCPF(this)" required>
+
+<div class="linha">
+    <input type="text" name="rg" placeholder="RG">
+    <input type="text" name="registro" placeholder="Registro">
+</div>
+
 <input type="text" name="nome_completo" placeholder="Nome Completo" required>
+
+<div class="linha">
+    <input type="text" name="pai" placeholder="Filiação - Pai">
+    <input type="text" name="mae" placeholder="Filiação - Mãe">
+</div>
+
+<div class="linha">
+    <select name="naturalidade">
+        <option value="">Naturalidade</option>
+        {% for municipio in municipios %}
+            <option value="{{ municipio.id }}">{{ municipio.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="date" name="data_nascimento" placeholder="Data de Nascimento">
+</div>
+
+<div class="linha">
+    <input type="date" name="data_admissao" placeholder="Data de Admissão">
+</div>
 
 <input list="lista_empresas" name="empresa_busca" placeholder="Digite razão social ou CNPJ da empresa" required>
 

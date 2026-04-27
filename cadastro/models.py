@@ -52,23 +52,36 @@ class Empresa(models.Model):
 
 
 class Seguranca(models.Model):
-    cpf = models.CharField(max_length=14, unique=True)
-    nome_completo = models.CharField(max_length=200)
-    empresa = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True)
-    situacao = models.CharField(max_length=30, default='Ativo')
+    cpf = models.CharField(max_length=14)
+    nome_completo = models.CharField(max_length=150)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+
+    # 🔥 NOVOS CAMPOS
+    rg = models.CharField(max_length=30, blank=True, null=True)
+    registro = models.CharField(max_length=50, blank=True, null=True)
+    pai = models.CharField(max_length=150, blank=True, null=True)
+    mae = models.CharField(max_length=150, blank=True, null=True)
+
+    naturalidade = models.ForeignKey(
+        Municipio,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='segurancas_naturais'
+    )
+
+    data_nascimento = models.DateField(blank=True, null=True)
+    data_admissao = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return self.nome_completo
 
-
-# 🔐 PÁGINAS DO SISTEMA
 class PaginaSistema(models.Model):
     nome = models.CharField(max_length=100)
-    rota = models.CharField(max_length=100, unique=True)
+    rota = models.CharField(max_length=100)
 
     def __str__(self):
         return self.nome
-
 
 # 🔐 PERMISSÃO POR USUÁRIO
 class PermissaoUsuario(models.Model):

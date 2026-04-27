@@ -164,11 +164,19 @@ def cadastrar(request):
             cnpj = empresa_busca.split(' - ')[-1]
             empresa = Empresa.objects.get(cnpj=cnpj)
 
-            seguranca = Seguranca.objects.create(
-                cpf=request.POST['cpf'],
-                nome_completo=request.POST['nome_completo'],
+            Seguranca.objects.create(
+                cpf=request.POST.get('cpf'),
+                rg=request.POST.get('rg'),
+                registro=request.POST.get('registro'),
+                nome_completo=request.POST.get('nome_completo'),
+                pai=request.POST.get('pai'),
+                mae=request.POST.get('mae'),
+                naturalidade_id=request.POST.get('naturalidade') or None,
+                data_nascimento=request.POST.get('data_nascimento') or None,
+                data_admissao=request.POST.get('data_admissao') or None,
                 empresa=empresa
             )
+            
 
             LogAcao.objects.create(
                 usuario=request.user,
