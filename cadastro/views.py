@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -8,6 +9,42 @@ from django.http import HttpResponse
 from .models import Empresa, Seguranca, Municipio, PaginaSistema, PermissaoUsuario, LogAcao
 from functools import wraps
 import csv
+
+def pesquisar_empresa(request):
+    busca_empresa = request.GET.get('empresa', '')
+
+    empresas = Empresa.objects.all().order_by('razao_social')
+    resultado_empresas = Empresa.objects.all().order_by('razao_social')
+
+    if busca_empresa:
+        resultado_empresas = resultado_empresas.filter(
+            Q(razao_social__icontains=busca_empresa) |
+            Q(cnpj__icontains=busca_empresa) |
+            Q(cpf__icontains=busca_empresa)
+        )
+
+    return render(request, 'cadastro/pesquisar_empresa.html', {
+        'empresas': empresas,
+        'resultado_empresas': resultado_empresas,
+        'busca_empresa': busca_empresa,
+    })
+
+
+def pesquisar_seguranca(request):
+    busca_cpf = request.GET.get('cpf', '')
+
+    resultado_segurancas = Seguranca.objects.select_related('empresa').all().order_by('nome_completo')
+
+    if busca_cpf:
+        resultado_segurancas = resultado_segurancas.filter(
+            Q(cpf__icontains=busca_cpf) |
+            Q(nome_completo__icontains=busca_cpf)
+        )
+
+    return render(request, 'cadastro/pesquisar_seguranca.html', {
+        'resultado_segurancas': resultado_segurancas,
+        'busca_cpf': busca_cpf,
+    })
 
 
 def tem_permissao(usuario, rota):

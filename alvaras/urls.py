@@ -7,11 +7,13 @@ from cadastro.views import (
     excluir_empresa, excluir_seguranca,
     usuarios, aplicar_nivel,
     logs, exportar_logs,
-    alternar_usuario, excluir_usuario, alterar_senha, registrar
+    alternar_usuario, excluir_usuario, alterar_senha, registrar,pesquisar_empresa, pesquisar_seguranca
 )
 
 urlpatterns = [
     path('fiscalizacao/', fiscalizacao),
+    path('pesquisar-empresa/', pesquisar_empresa),
+    path('pesquisar-seguranca/', pesquisar_seguranca),
     path('alterar-senha/', alterar_senha),
     path('registrar/', registrar),
     path('', tela_login),

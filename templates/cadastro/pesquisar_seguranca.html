@@ -1,0 +1,54 @@
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
+<style>
+.pagina{background:#f1f1f1;padding:40px}
+.box{background:white;padding:30px;border-radius:10px;max-width:1000px;margin:20px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+input,button{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}
+button{background:#0d1b2a;color:white;border:none;cursor:pointer}
+table{width:100%;margin-top:20px;border-collapse:collapse}
+th,td{padding:10px;border:1px solid #ccc;text-align:left}
+a{color:#0d1b2a;font-weight:bold;text-decoration:none}
+</style>
+
+<div class="pagina">
+<div class="box">
+
+<h2>Pesquisar Segurança</h2>
+
+<form method="get">
+    <input type="text" name="cpf" value="{{ busca_cpf }}" placeholder="Digite CPF ou nome do segurança">
+    <button type="submit">Pesquisar</button>
+</form>
+
+<table>
+<tr>
+    <th>CPF</th>
+    <th>Nome</th>
+    <th>Empresa</th>
+    <th>Situação</th>
+    <th>Ações</th>
+</tr>
+
+{% for s in resultado_segurancas %}
+<tr>
+    <td>{{ s.cpf }}</td>
+    <td>{{ s.nome_completo }}</td>
+    <td>{{ s.empresa.razao_social }}</td>
+    <td>{{ s.situacao }}</td>
+    <td>
+        <a href="/editar-seguranca/{{ s.id }}/">Editar</a> |
+        <a href="/excluir-seguranca/{{ s.id }}/">Excluir</a>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5">Nenhum segurança encontrado.</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+</div>
+
+{% endblock %}

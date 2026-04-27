@@ -1,0 +1,67 @@
+{% extends 'cadastro/base.html' %}
+{% block content %}
+
+<style>
+.pagina{background:#f1f1f1;padding:40px}
+.box{background:white;padding:30px;border-radius:10px;max-width:1000px;margin:20px auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+input,button{width:100%;padding:12px;margin-top:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}
+button{background:#0d1b2a;color:white;border:none;cursor:pointer}
+table{width:100%;margin-top:20px;border-collapse:collapse}
+th,td{padding:10px;border:1px solid #ccc;text-align:left}
+a{color:#0d1b2a;font-weight:bold;text-decoration:none}
+</style>
+
+<div class="pagina">
+<div class="box">
+
+<h2>Pesquisar Empresa</h2>
+
+<form method="get">
+    <input list="lista_empresas" name="empresa" value="{{ busca_empresa }}" placeholder="Digite razão social, CPF ou CNPJ">
+
+    <datalist id="lista_empresas">
+        {% for empresa in empresas %}
+            <option value="{{ empresa.razao_social }}"></option>
+            {% if empresa.cnpj %}
+                <option value="{{ empresa.cnpj }}"></option>
+            {% endif %}
+            {% if empresa.cpf %}
+                <option value="{{ empresa.cpf }}"></option>
+            {% endif %}
+        {% endfor %}
+    </datalist>
+
+    <button type="submit">Pesquisar</button>
+</form>
+
+<table>
+<tr>
+    <th>CPF/CNPJ</th>
+    <th>Razão Social / Nome</th>
+    <th>Endereço</th>
+    <th>Situação</th>
+    <th>Ações</th>
+</tr>
+
+{% for empresa in resultado_empresas %}
+<tr>
+    <td>{% if empresa.cnpj %}{{ empresa.cnpj }}{% else %}{{ empresa.cpf }}{% endif %}</td>
+    <td>{{ empresa.razao_social }}</td>
+    <td>{{ empresa.endereco }}</td>
+    <td>{{ empresa.situacao }}</td>
+    <td>
+        <a href="/editar-empresa/{{ empresa.id }}/">Editar</a> |
+        <a href="/excluir-empresa/{{ empresa.id }}/">Excluir</a>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5">Nenhuma empresa encontrada.</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+</div>
+
+{% endblock %}
