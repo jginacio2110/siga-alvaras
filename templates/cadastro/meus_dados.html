@@ -10,21 +10,30 @@
     margin:20px auto;
     box-shadow:0 0 10px rgba(0,0,0,.1);
 }
-.linha{
+
+.campo{
     display:grid;
     grid-template-columns:220px 1fr;
     border-bottom:1px solid #ccc;
+    align-items:center;
 }
-.linha label{
-    padding:10px;
+
+.campo label{
+    padding:12px 10px;
     font-weight:bold;
     background:#f5f5f5;
 }
-.linha input{
-    padding:10px;
+
+.campo input{
+    width:100%;
+    padding:12px;
     border:none;
     outline:none;
+    font-size:15px;
+    box-sizing:border-box;
+    background:white;
 }
+
 button{
     margin-top:20px;
     padding:12px;
@@ -43,47 +52,47 @@ button{
 <form method="post">
 {% csrf_token %}
 
-<div class="linha">
+<div class="campo">
     <label>Graduação/Função:</label>
     <input type="text" name="graduacao" value="{{ dados.graduacao|default_if_none:'' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>Nome de guerra:</label>
     <input type="text" name="nome_guerra" value="{{ dados.nome_guerra|default_if_none:'' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>Nome completo:</label>
     <input type="text" name="nome_completo" value="{{ dados.nome_completo|default_if_none:'' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>CPF:</label>
     <input type="text" name="cpf" value="{{ dados.cpf|default_if_none:'' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>Data de nascimento:</label>
     <input type="date" name="data_nascimento" value="{{ dados.data_nascimento|date:'Y-m-d' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>Cidade de nascimento:</label>
     <input type="text" name="cidade_nascimento" value="{{ dados.cidade_nascimento|default_if_none:'' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>UF de nascimento:</label>
     <input type="text" name="uf_nascimento" maxlength="2" value="{{ dados.uf_nascimento|default_if_none:'' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>Nome do pai:</label>
     <input type="text" name="pai" value="{{ dados.pai|default_if_none:'' }}">
 </div>
 
-<div class="linha">
+<div class="campo">
     <label>Nome da mãe:</label>
     <input type="text" name="mae" value="{{ dados.mae|default_if_none:'' }}">
 </div>
